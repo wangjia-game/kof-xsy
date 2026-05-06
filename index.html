@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>👊 KOF 格斗经理</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a14;--card:#141428;--border:#2a2a44;--gold:#ffd700;--shard:#00bfff;--shark:#00d4ff;--energy:#2ecc71}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:#ddd;min-height:100vh;font-size:13px;overflow-x:hidden}
+.container{max-width:1200px;margin:0 auto;padding:15px}
+.header{text-align:center;padding:20px 0;border-bottom:2px solid #ff4444;margin-bottom:15px}
+.header h1{font-size:28px;color:#ff4444;text-shadow:0 0 20px rgba(255,68,68,.5)}
+.header .sub{color:#888;font-size:12px;margin-top:5px}
+.sbar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:15px}
+.sbox{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.sbox .lb{font-size:10px;color:#777}.sbox .vl{font-size:16px;font-weight:700;margin-top:2px}
+.sbox.gold .vl{color:var(--gold)}.sbox.shard .vl{color:var(--shard)}.sbox.lg .vl{color:var(--energy)}.sbox.vl .vl{color:#9b59b6}.sbox.shark .vl{color:var(--shark)}.sbox.energy .vl{color:#2ecc71}
+.nav-bar{display:flex;gap:10px;margin-bottom:15px;overflow-x:auto;flex-wrap:wrap}
+.nav-btn{flex:1;min-width:80px;padding:12px 15px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:#888;cursor:pointer;font-size:12px;font-weight:700;transition:.2s;white-space:nowrap}
+.nav-btn:hover{background:#1e1e30;border-color:#ff4444}.nav-btn.ac{background:#ff4444;color:#fff;border-color:#ff4444}
+.sub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:15px}
+.sub-card{background:linear-gradient(135deg,#1a1a3a,#2a2a5a);border:2px solid var(--border);border-radius:10px;padding:15px 10px;text-align:center;cursor:pointer;transition:.3s}
+.sub-card:hover{transform:translateY(-3px);border-color:#ff4444;box-shadow:0 5px 20px rgba(255,68,68,.3)}
+.sub-card.ac{background:linear-gradient(135deg,#ff4444,#cc0000);border-color:#ff6666;transform:translateY(-3px);box-shadow:0 5px 20px rgba(255,68,68,.5)}
+.sub-card .icon{font-size:28px;margin-bottom:8px}
+.sub-card .name{font-size:12px;font-weight:700;color:#fff}
+.main-panel{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:15px;min-height:500px}
+.panel-title{font-size:16px;font-weight:700;color:#ff4444;margin-bottom:15px;border-bottom:1px solid var(--border);padding-bottom:10px}
+.panel-content{display:none}
+.panel-content.ac{display:block}
+.rb8{background:#555}.rb9{background:#777}.rb10{background:#aaa}.rb11{background:#2ecc71}.rb12{background:#3498db}.rb13{background:#9b59b6}.rb14{background:#e67e22}.rb15{background:#ffd700}.rb16{background:#ff0066}
+.btn{display:inline-block;padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;transition:.2s;color:#fff}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.1)}.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.bp{background:linear-gradient(135deg,#ff4444,#cc0000)}.bs{background:linear-gradient(135deg,#4444ff,#2222cc)}
+.bg{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000}.bpu{background:linear-gradient(135deg,#a855f7,#7c3aed)}
+.bgr{background:linear-gradient(135deg,#22c55e,#16a34a)}.bo{background:transparent;border:1px solid var(--border);color:#aaa}.bshark{background:linear-gradient(135deg,#00d4ff,#0099cc)}.benergy{background:linear-gradient(135deg,#2ecc71,#27ae60)}
+.bsm{padding:5px 10px;font-size:11px}.bblk{display:block;width:100%;text-align:center}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;margin:6px 0;display:flex;align-items:center;gap:10px;cursor:pointer;transition:.2s}
+.fc:hover{border-color:#ff4444;transform:translateX(3px)}
+.fc .f-icon{font-size:28px;width:45px;text-align:center}.fc .f-info{flex:1}
+.fc .f-name{font-weight:700;font-size:13px}.fc .f-stats{font-size:10px;color:#888;margin-top:3px}
+.pb{height:6px;background:#222;border-radius:3px;overflow:hidden;margin-top:5px}
+.pbf{height:100%;border-radius:3px;transition:width .3s}
+.clog{background:#0d0d1a;border:1px solid var(--border);border-radius:8px;padding:10px;margin:8px 0;max-height:180px;overflow-y:auto;font-size:11px;line-height:1.6}
+.clog .dmg{color:#ff6b6b}.clog.loot{color:#ffd700}.clog.win{color:#2ecc71;font-weight:700}.clog.lose{color:#e74c3c;font-weight:700}
+.modal-o{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:100}
+.modal-o.show{display:flex}.modal{background:var(--card);border:2px solid #ff4444;border-radius:12px;padding:20px;max-width:500px;width:92%;text-align:center;max-height:80vh;overflow-y:auto}
+.modal h3{color:#ff4444;margin-bottom:10px;font-size:16px}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:#111}::-webkit-scrollbar-thumb{background:#444;border-radius:2px}
+.team-slot{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;margin:5px 0;display:flex;align-items:center;gap:8px}
+.team-slot .slot-num{width:25px;height:25px;background:#333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.team-slot .fighter-mini{flex:1;display:flex;align-items:center;gap:6px}
+.team-slot .fighter-mini .icon{font-size:20px}
+.team-slot .fighter-mini .info{flex:1}
+.team-slot .fighter-mini .name{font-size:11px;font-weight:700}
+.team-slot .fighter-mini .stats{font-size:9px;color:#888}
+.vip-card{background:linear-gradient(135deg,#1a1a3a,#2a2a5a);border:2px solid #ffd700;border-radius:10px;padding:15px;margin:10px 0}
+.vip-card .vip-level{font-size:20px;font-weight:700;color:#ffd700;margin-bottom:5px}
+.vip-card .vip-req{font-size:11px;color:#888;margin-bottom:8px}
+.vip-card .vip-benefit{font-size:11px;color:#2ecc71}
+.sponsor-box{background:linear-gradient(135deg,#0d0d1a,#1a1a2e);border:1px solid #00d4ff;border-radius:10px;padding:15px;margin:10px 0;text-align:left}
+.sponsor-box h4{color:#00d4ff;margin-bottom:8px;font-size:13px}
+.sponsor-box p{font-size:11px;color:#888;line-height:1.6;margin-bottom:5px}
+.sponsor-box .wechat{color:#ffd700;font-weight:700}
+.input-box{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px;margin:8px 0;width:100%;font-size:12px;color:#ddd}
+.input-box::placeholder{color:#666}
+.update-box{background:linear-gradient(135deg,#1a0a2e,#2a1a4e);border:2px solid #d946ef;border-radius:10px;padding:15px;margin:10px 0}
+.update-box h4{color:#d946ef;margin-bottom:8px;font-size:13px}
+.update-box ul{font-size:11px;color:#888;line-height:1.8;margin-left:20px}
+.soul-box{background:linear-gradient(135deg,#2a0a0a,#4a1a1a);border:2px solid #ff0066;border-radius:10px;padding:15px;margin:10px 0;text-align:center}
+.soul-box .soul-icon{font-size:40px;margin-bottom:10px}
+.soul-box .soul-name{font-size:16px;font-weight:700;color:#ff0066;margin-bottom:5px}
+.soul-box .soul-rate{font-size:11px;color:#888;margin-bottom:10px}
+.tournament-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin:8px 0}
+.tournament-card .title{font-size:14px;font-weight:700;color:#ff4444;margin-bottom:5px}
+.tournament-card .desc{font-size:11px;color:#888;margin-bottom:8px}
+.tournament-card .reward{font-size:11px;color:#ffd700;margin-bottom:8px}
+.tournament-card .progress{font-size:11px;color:#888}
+.summon-result{margin-top:15px;padding:15px;background:#1a1a2e;border-radius:8px}
+.summon-result h4{color:#ffd700;margin-bottom:10px;font-size:13px}
+.summon-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.summon-card{background:#0d0d1a;border:1px solid #333;border-radius:6px;padding:8px;text-align:center}
+.summon-card .icon{font-size:20px}
+.summon-card .name{font-size:9px;color:#ddd;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.summon-card .quality{font-size:8px;color:#888;margin-top:2px}
+.summon-extra{margin-top:10px;padding:8px;background:#0d0d1a;border-radius:6px;text-align:center;font-size:11px;color:#888}
+/* 战斗系统样式 */
+.battle-arena{background:linear-gradient(135deg,#1a0a0a,#2a1a1a);border:2px solid #ff4444;border-radius:10px;padding:15px;margin:10px 0;position:relative;overflow-hidden;box-shadow:0 0 30px rgba(255,68,68,.3);min-height:400px}
+.battle-arena::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 50% 50%,rgba(255,68,68,.1) 0%,transparent 70%);animation:battleBgPulse 2s ease infinite}
+@keyframes battleBgPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.battle-field{display:grid;grid-template-columns:1fr 100px 1fr;gap:15px;align-items:center;min-height:350px;position:relative;z-index:1}
+.battle-team{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.battle-fighter{background:linear-gradient(135deg,#0d0d1a,#1a1a2e);border:2px solid #444;border-radius:10px;padding:10px;text-align:center;transition:all .3s ease;position:relative;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.5)}
+.battle-fighter::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent,rgba(255,255,255,.1),transparent);transform:rotate(45deg);animation:fighterShine 2s ease infinite}
+@keyframes fighterShine{0%{transform:translateX(-100%) rotate(45deg)}100%{transform:translateX(100%) rotate(45deg)}}
+.battle-fighter::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#2ecc71,transparent);opacity:.5}
+.battle-fighter.active{border-color:#ffd700;border-width:3px;box-shadow:0 0 30px rgba(255,212,0,.8),0 0 60px rgba(255,212,0,.4),inset 0 0 20px rgba(255,212,0,.2);transform:scale(1.1);z-index:10;animation:activePulse .5s ease infinite}
+@keyframes activePulse{0%,100%{box-shadow:0 0 30px rgba(255,212,0,.8),0 0 60px rgba(255,212,0,.4)}50%{box-shadow:0 0 50px rgba(255,212,0,1),0 0 80px rgba(255,212,0,.6)}}
+.battle-fighter.attacking{animation:fighterAttack .5s ease forwards;z-index:50}
+.battle-fighter.hit{animation:fighterHit .3s ease forwards}
+.battle-fighter.dead{opacity:.1;filter:grayscale(1) blur(3px);transform:scale(.9)}
+.battle-fighter .icon{font-size:32px;transition:all .3s;display:inline-block;filter:drop-shadow(0 0 8px rgba(255,255,255,.5))}
+.battle-fighter.active .icon{animation:iconGlow .4s ease infinite;filter:drop-shadow(0 0 15px #ffd700) drop-shadow(0 0 30px #ff8c00);transform:scale(1.2)}
+@keyframes fighterAttack{
+0%{transform:translateX(0) scale(1.1)}
+25%{transform:translateX(-50px) scale(1.15)}
+50%{transform:translateX(200px) scale(1.4) rotate(20deg)}
+75%{transform:translateX(-50px) scale(1.15)}
+100%{transform:translateX(0) scale(1.1)}
+}
+@keyframes fighterHit{
+0%{transform:translateX(0)}
+15%{transform:translateX(-10px) scale(.9);filter:brightness(2) hue-rotate(20deg)}
+30%{transform:translateX(10px) scale(.9);filter:brightness(1.5)}
+45%{transform:translateX(-8px) scale(.95);filter:brightness(1.2)}
+60%{transform:translateX(6px) scale(.98)}
+100%{transform:translateX(0)}
+}
+@keyframes iconGlow{
+0%,100%{filter:drop-shadow(0 0 10px #ffd700) drop-shadow(0 0 20px #ff8c00);transform:scale(1.2)}
+50%{filter:drop-shadow(0 0 25px #ffd700) drop-shadow(0 0 50px #ff8c00);transform:scale(1.25)}
+}
+.skill-popup{position:absolute;top:-40px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ff4444,#ff8c00);color:#fff;padding:8px 15px;border-radius:10px;font-size:12px;font-weight:700;white-space:nowrap;z-index:100;animation:skillPopup .8s ease forwards;box-shadow:0 0 20px rgba(255,68,68,.8),0 0 40px rgba(255,140,0,.4);border:2px solid #fff}
+@keyframes skillPopup{
+0%{opacity:0;transform:translateX(-50%) translateY(10px) scale(.8);filter:brightness(.5)}
+20%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);filter:brightness(1)}
+80%{opacity:1;transform:translateX(-50%) translateY(-20px) scale(1.1)}
+100%{opacity:0;transform:translateX(-50%) translateY(-30px) scale(1.2);filter:brightness(1.5)}
+}
+.battle-fighter .name{font-size:10px;color:#ddd;margin:3px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.battle-fighter .hp-bar{height:4px;background:#333;border-radius:2px;overflow:hidden;margin-top:3px}
+.battle-fighter .hp-fill{height:100%;background:linear-gradient(90deg,#2ecc71,#27ae60);transition:width .3s}
+.battle-fighter .hp-text{font-size:8px;color:#888;margin-top:2px}
+.battle-vs{text-align:center;font-size:20px;font-weight:700;color:#ff4444;animation:pulse .5s ease infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.battle-log{background:#0d0d1a;border:1px solid #333;border-radius:8px;padding:10px;margin-top:10px;max-height:200px;overflow-y:auto;font-size:11px}
+.battle-action{margin:5px 0;padding:5px;background:#1a1a2e;border-radius:4px}
+.battle-action.attack{border-left:3px solid #ff6b6b}
+.battle-action.heal{border-left:3px solid #2ecc71}
+.battle-action.win{border-left:3px solid #ffd700}
+.battle-action.lose{border-left:3px solid #e74c3c}
+.damage-popup{position:absolute;font-size:18px;font-weight:700;color:#ff6b6b;animation:damageFloat .8s ease forwards;pointer-events:none;z-index:100;text-shadow:0 0 5px #ff0000}
+@keyframes damageFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(1.2)}}
+.fighter-moving{transition:all .5s ease;z-index:50}
+/* 离线收益弹窗 */
+.offline-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#1a1a3a,#2a2a5a);border:3px solid #ffd700;border-radius:15px;padding:30px;z-index:200;max-width:400px;width:90%;box-shadow:0 0 50px rgba(255,212,0,.5);animation:offlinePop .5s ease}
+@keyframes offlinePop{from{opacity:0;transform:translate(-50%,-50%) scale(.8)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.offline-modal h3{color:#ffd700;margin-bottom:15px;text-align:center;font-size:18px}
+.offline-item{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #333}
+.offline-item:last-child{border-bottom:none}
+.offline-item .label{color:#888}
+.offline-item .value{color:#2ecc71;font-weight:700}
+.offline-close{margin-top:15px;text-align:center}
+/* 关卡选择 */
+.stage-select{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
+.stage-btn{padding:15px;background:var(--card);border:2px solid var(--border);border-radius:8px;color:#ddd;cursor:pointer;transition:.3s;text-align:center}
+.stage-btn:hover{border-color:#ff4444;transform:translateY(-2px)}
+.stage-btn.ac{background:linear-gradient(135deg,#ff4444,#cc0000);border-color:#ff6666}
+.stage-info{font-size:10px;color:#888;margin-top:5px}
+.stage-reward{font-size:9px;color:#ffd700;margin-top:3px}
+/* GM 工具样式 */
+.gm-trigger{position:fixed;bottom:10px;left:10px;width:30px;height:30px;background:#1a1a2e;border:1px solid #333;border-radius:50%;cursor:pointer;opacity:0.3;transition:.3s;z-index:999;font-size:16px;display:flex;align-items:center;justify-content:center}
+.gm-trigger:hover{opacity:1;border-color:#00d4ff;box-shadow:0 0 10px rgba(0,212,255,.5)}
+.gm-panel{position:fixed;bottom:50px;left:10px;width:280px;background:linear-gradient(135deg,#0d0d1a,#1a1a2e);border:2px solid #00d4ff;border-radius:10px;padding:15px;z-index:999;display:none;box-shadow:0 5px 30px rgba(0,0,0,.5)}
+.gm-panel.show{display:block;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.gm-panel h4{color:#00d4ff;margin-bottom:10px;font-size:13px;text-align:center}
+.gm-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.gm-row label{font-size:11px;color:#888;min-width:50px}
+.gm-row input{flex:1;background:#1a1a2e;border:1px solid #333;border-radius:4px;padding:5px;color:#ddd;font-size:11px}
+.gm-row select{flex:1;background:#1a1a2e;border:1px solid #333;border-radius:4px;padding:5px;color:#ddd;font-size:11px}
+.gm-btn{width:100%;padding:8px;background:linear-gradient(135deg,#00d4ff,#0099cc);border:none;border-radius:6px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;margin-top:5px}
+.gm-btn:hover{filter:brightness(1.2)}
+.gm-close{position:absolute;top:5px;right:8px;font-size:16px;color:#666;cursor:pointer}
+.gm-close:hover{color:#fff}
+.gm-status{font-size:10px;color:#2ecc71;text-align:center;margin-top:8px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:2px solid #333;border-radius:8px;padding:12px 24px;z-index:1000;animation:toastFade .3s ease;white-space:nowrap;font-size:13px;font-weight:700}
+.toast.success{border-color:#2ecc71;color:#2ecc71;box-shadow:0 0 20px rgba(46,204,113,.3)}
+.toast.error{border-color:#e74c3c;color:#e74c3c;box-shadow:0 0 20px rgba(231,76,60,.3)}
+@keyframes toastFade{from{opacity:0;transform:translate(-50%,-20px)}to{opacity:1;transform:translate(-50%,0)}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>👊 KOF 格斗经理</h1>
+<div class="sub">收集格斗家 · 升星培养 · 称霸格斗界</div>
+</div>
+
+<div class="sbar">
+<div class="sbox gold"><div class="lb">💰 金币</div><div class="vl" id="gold">5000</div></div>
+<div class="sbox shard"><div class="lb">💎 碎片</div><div class="vl" id="shard">200</div></div>
+<div class="sbox shark"><div class="lb">🦈 鲨币</div><div class="vl" id="shark">0</div></div>
+<div class="sbox energy"><div class="lb">⚡ 体力</div><div class="vl" id="energy">500/500</div></div>
+<div class="sbox vl"><div class="lb">👑 VIP</div><div class="vl" id="vip">0</div></div>
+</div>
+<div style="text-align:center;margin-bottom:10px;font-size:12px;color:#888">📍 最高关卡：<span id="stage" style="color:#ffd700;font-weight:700">1</span></div>
+
+<!-- 横排主导航 -->
+<div class="nav-bar">
+<button class="nav-btn ac" data-section="home">🏠 首页</button>
+<button class="nav-btn" data-section="roster">🎯 阵容</button>
+<button class="nav-btn" data-section="battle">⚔️ 战斗</button>
+<button class="nav-btn" data-section="tournament">🏆 赛事</button>
+<button class="nav-btn" data-section="activity">🎉 活动</button>
+</div>
+
+<!-- 子导航格子 -->
+<div class="sub-grid" id="sub-grid" style="display:none"></div>
+
+<!-- 主面板 -->
+<div class="main-panel">
+<div class="panel-title" id="panel-title">🏠 首页</div>
+
+<!-- 首页 -->
+<div class="panel-content ac" id="panel-home">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
+<div class="tournament-card">
+<div class="title">📊 今日概览</div>
+<div class="desc">格斗家总数：<span id="home-fighter-count" style="color:#ffd700">0</span> | 平均战力：<span id="home-avg-power" style="color:#2ecc71">0</span></div>
+<div class="progress">最强格斗家：<span id="home-best-fighter" style="color:#ff4444">-</span></div>
+</div>
+<div class="tournament-card" style="background:linear-gradient(135deg,#1a2a1a,#2a3a2a);border-color:#2ecc71">
+<div class="title" style="color:#2ecc71">💰 挂机收益</div>
+<div style="font-size:10px;color:#888;margin-bottom:8px">普通：<span id="idle-stage-1" style="color:#ffd700">0</span>关 | 精英：<span id="idle-stage-2" style="color:#ffd700">0</span>关 | 宗师：<span id="idle-stage-3" style="color:#ffd700">0</span>关</div>
+<div style="font-size:11px;color:#888;margin-bottom:5px">每 30 秒收益：</div>
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
+<span>💰 金币</span>
+<span style="color:#ffd700" id="idle-gold-rate">0</span>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
+<span>💎 碎片</span>
+<span style="color:#00bfff" id="idle-shard-rate">0</span>
+</div>
+<div style="background:#0d0d1a;border-radius:6px;padding:8px;margin-bottom:8px">
+<div style="font-size:10px;color:#888;margin-bottom:3px">待领取收益：</div>
+<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px">
+<span>💰 金币</span>
+<span style="color:#ffd700;font-weight:700" id="idle-gold-pending">0</span>
+</div>
+<div style="display:flex;justify-content:space-between;font-size:13px">
+<span>💎 碎片</span>
+<span style="color:#00bfff;font-weight:700" id="idle-shard-pending">0</span>
+</div>
+</div>
+<button class="btn bgr bblk" onclick="claimIdleRewards()" id="btn-claim-idle" disabled>🎁 领取收益</button>
+</div>
+</div>
+<div class="update-box">
+<h4>📢 更新日志</h4>
+<div style="max-height:300px;overflow-y:auto">
+<div style="background:#1a1a2e;border-left:3px solid #ffd700;padding:10px;margin-bottom:10px">
+<div style="color:#ffd700;font-weight:700;margin-bottom:5px">🎉 v1.3.0 - 2026-05-06</div>
+<ul style="font-size:11px;color:#888;line-height:1.8">
+<li>⭐ 15 资质上限提升至 1 万星</li>
+<li>⭐ 16 资质上限提升至 5 万星</li>
+<li>💪 5000 星后每级属性 +10%</li>
+</ul>
+</div>
+<div style="background:#1a1a2e;border-left:3px solid #4a90d9;padding:10px;margin-bottom:10px">
+<div style="color:#4a90d9;font-weight:700;margin-bottom:5px">🎮 v1.2.0 - 战斗优化</div>
+<ul style="font-size:11px;color:#888;line-height:1.8">
+<li>✅ 修复敌人血量显示问题</li>
+<li>✅ 新增战斗速度控制（1x/2x/5x）</li>
+<li>✅ 新增超级炼狱难度（500 关后）</li>
+<li>✅ 移除 GM 工具，界面更简洁</li>
+</ul>
+</div>
+<div style="background:#1a1a2e;border-left:3px solid #4a90d9;padding:10px;margin-bottom:10px">
+<div style="color:#4a90d9;font-weight:700;margin-bottom:5px">🎮 v1.1.0 - 竞技场</div>
+<ul style="font-size:11px;color:#888;line-height:1.8">
+<li>🏟️ 新增竞技场系统</li>
+<li>🏆 100 个虚拟玩家排名</li>
+<li>💰 每日排名奖励</li>
+<li>🎁 礼包码系统</li>
+</ul>
+</div>
+<div style="background:#1a1a2e;border-left:3px solid #2ecc71;padding:10px;margin-bottom:10px">
+<div style="color:#2ecc71;font-weight:700;margin-bottom:5px">⚔️ v1.0.0 - 战斗重做</div>
+<ul style="font-size:11px;color:#888;line-height:1.8">
+<li>6V6 回合制战斗</li>
+<li>100+ 格斗家（含西游记人物）</li>
+<li>战斗动画特效</li>
+<li>16 资质格斗家</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 出战阵容 -->
+<div class="panel-content" id="panel-team">
+<div class="tournament-card">
+<div class="title">🎯 出战阵容 (最多 6 人)</div>
+<div id="team-slots"></div>
+<div style="margin-top:10px;text-align:center">
+<div style="font-size:18px;color:#ff4444;font-weight:700">战队总战力：<span id="team-total-power">0</span></div>
+</div>
+</div>
+</div>
+
+<!-- 格斗家列表 -->
+<div class="panel-content" id="panel-fighters">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div style="font-size:14px;font-weight:700;color:#ff4444">👥 所有格斗家</div>
+<div style="display:flex;gap:5px;flex-wrap:wrap">
+<button class="btn bo bsm" onclick="filterQuality('all')">全部</button>
+<button class="btn rb8 bsm" onclick="filterQuality(8)">8</button>
+<button class="btn rb9 bsm" onclick="filterQuality(9)">9</button>
+<button class="btn rb10 bsm" onclick="filterQuality(10)">10</button>
+<button class="btn rb11 bsm" onclick="filterQuality(11)">11</button>
+<button class="btn rb12 bsm" onclick="filterQuality(12)">12</button>
+<button class="btn rb13 bsm" onclick="filterQuality(13)">13</button>
+<button class="btn rb14 bsm" onclick="filterQuality(14)">14</button>
+<button class="btn rb15 bsm" onclick="filterQuality(15)">15</button>
+<button class="btn rb16 bsm" onclick="filterQuality(16)">16</button>
+</div>
+</div>
+<div id="fighters-list"></div>
+</div>
+
+<!-- 战斗 -->
+<div class="panel-content" id="panel-battle">
+<div class="tournament-card">
+<div class="title">⚔️ 选择关卡</div>
+<div class="stage-select">
+<div class="stage-btn ac" data-difficulty="1" onclick="selectDifficulty(1)">
+<div>👊 普通擂台</div>
+<div class="stage-info">第<span id="stage-1">1</span>/2000 关</div>
+<div class="stage-reward">💰<span id="reward-gold-1">100</span> 💎<span id="reward-shard-1">10</span></div>
+</div>
+<div class="stage-btn" data-difficulty="2" onclick="selectDifficulty(2)">
+<div>💀 精英擂台</div>
+<div class="stage-info">第<span id="stage-2">1</span>/2000 关</div>
+<div class="stage-reward">💰<span id="reward-gold-2">300</span> 💎<span id="reward-shard-2">30</span></div>
+</div>
+<div class="stage-btn" data-difficulty="3" onclick="selectDifficulty(3)">
+<div>👹 宗师擂台</div>
+<div class="stage-info">第<span id="stage-3">1</span>/2000 关</div>
+<div class="stage-reward">💰<span id="reward-gold-3">500</span> 💎<span id="reward-shard-3">50</span> 🦈<span id="reward-shark-3">0.1</span></div>
+</div>
+</div>
+<div style="margin-top:10px;display:flex;align-items:center;gap:10px">
+<label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+<input type="checkbox" id="chk-auto-battle" onchange="toggleAutoBattleMode()">
+<span style="font-size:11px;color:#888">🤖 自动战斗 (获胜后继续下一关)</span>
+</label>
+</div>
+<button class="btn bp bblk" onclick="startBattle()" id="btn-start-battle" disabled style="margin-top:10px">⚔️ 开始战斗</button>
+</div>
+</div>
+
+<!-- 全屏战斗界面 -->
+<div id="fullscreen-battle" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#0a0a0a,#1a0a0a);z-index:9999;overflow:hidden">
+<!-- 战斗背景特效 -->
+<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 50% 50%,rgba(255,68,68,0.1) 0%,transparent 70%);animation:bgPulse 3s ease infinite"></div>
+<style>@keyframes bgPulse{0%,100%{opacity:0.5}50%{opacity:1}}</style>
+
+<!-- 顶部信息栏 -->
+<div style="position:absolute;top:0;left:0;right:0;padding:15px;background:linear-gradient(180deg,rgba(0,0,0,0.8),transparent);display:flex;justify-content:space-between;align-items:center;z-index:10">
+<div style="display:flex;gap:15px;align-items:center">
+<div style="color:#ffd700;font-size:18px;font-weight:700">⚔️ 第<span id="battle-stage-display">1</span>关</div>
+<div style="color:#fff;font-size:16px">🔄 回合：<span id="battle-round-display">1</span></div>
+<div style="display:flex;gap:5px">
+<button class="btn bsm" id="btn-speed-1" onclick="setBattleSpeed(1)" style="background:#4a90d9">1x</button>
+<button class="btn bsm" id="btn-speed-2" onclick="setBattleSpeed(2)" style="background:#333">2x</button>
+<button class="btn bsm" id="btn-speed-5" onclick="setBattleSpeed(5)" style="background:#333">5x</button>
+</div>
+</div>
+<div style="display:flex;gap:10px">
+<button class="btn bpu" id="btn-pause-battle" onclick="togglePauseBattle()" style="padding:8px 20px">⏸️ 暂停</button>
+<button class="btn bo" onclick="closeBattle()" style="padding:8px 20px">❌ 退出战斗</button>
+</div>
+</div>
+
+<!-- 玩家队伍 -->
+<div style="position:absolute;left:35%;top:50%;transform:translate(-50%,-50%);display:grid;grid-template-columns:repeat(2,1fr);gap:12px;z-index:5">
+<div id="battle-player-0" class="battle-fighter-card"></div>
+<div id="battle-player-1" class="battle-fighter-card"></div>
+<div id="battle-player-2" class="battle-fighter-card"></div>
+<div id="battle-player-3" class="battle-fighter-card"></div>
+<div id="battle-player-4" class="battle-fighter-card"></div>
+<div id="battle-player-5" class="battle-fighter-card"></div>
+</div>
+
+<!-- VS 标志 -->
+<div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:80px;font-weight:700;color:#ff4444;text-shadow:0 0 30px #ff4444,0 0 60px #ff0000;animation:vsPulse 1s ease infinite;z-index:1">
+VS
+<style>@keyframes vsPulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.1)}}</style>
+</div>
+
+<!-- 敌人队伍 -->
+<div style="position:absolute;right:35%;top:50%;transform:translate(50%,-50%);display:grid;grid-template-columns:repeat(2,1fr);gap:12px;z-index:5">
+<div id="battle-enemy-0" class="battle-fighter-card"></div>
+<div id="battle-enemy-1" class="battle-fighter-card"></div>
+<div id="battle-enemy-2" class="battle-fighter-card"></div>
+<div id="battle-enemy-3" class="battle-fighter-card"></div>
+<div id="battle-enemy-4" class="battle-fighter-card"></div>
+<div id="battle-enemy-5" class="battle-fighter-card"></div>
+</div>
+
+<!-- 战斗日志 -->
+<div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:60%;max-height:200px;overflow-y:auto;background:rgba(0,0,0,0.7);border:2px solid #ff4444;border-radius:10px;padding:15px;z-index:10">
+<div id="fullscreen-battle-log"></div>
+</div>
+
+<!-- 技能特效层 -->
+<div id="battle-effects" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:20"></div>
+</div>
+
+<style>
+.battle-fighter-card{
+width:120px;height:140px;
+background:linear-gradient(135deg,#1a1a2e,#2a2a4e);
+border:2px solid #444;border-radius:10px;
+padding:10px;text-align:center;
+transition:all 0.3s ease;
+position:relative;
+}
+.battle-fighter-card.active{
+border-color:#ffd700;
+box-shadow:0 0 30px rgba(255,215,0,0.8),0 0 60px rgba(255,215,0,0.4);
+transform:scale(1.1);
+animation:fighterActive 0.5s ease infinite;
+}
+@keyframes fighterActive{
+0%,100%{filter:brightness(1)}
+50%{filter:brightness(1.3)}
+}
+.battle-fighter-card.dead{
+opacity:0.3;
+filter:grayscale(1);
+}
+.battle-fighter-card .icon{
+font-size:40px;
+margin-bottom:5px;
+}
+.battle-fighter-card .name{
+font-size:11px;
+color:#ddd;
+font-weight:700;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
+.battle-fighter-card .hp-bar{
+width:100%;height:6px;
+background:#222;
+border-radius:3px;
+overflow:hidden;
+margin-top:5px;
+}
+.battle-fighter-card .hp-fill{
+height:100%;
+background:linear-gradient(90deg,#2ecc71,#27ae60);
+transition:width 0.5s ease;
+}
+.battle-fighter-card .hp-text{
+font-size:9px;
+color:#888;
+margin-top:3px;
+}
+.battle-fighter-card.attacking{
+animation:fighterAttack 0.5s ease;
+}
+@keyframes fighterAttack{
+0%{transform:translateX(0) scale(1.1)}
+50%{transform:translateX(100px) scale(1.2) rotate(10deg)}
+100%{transform:translateX(0) scale(1.1)}
+}
+.battle-fighter-card.hit{
+animation:fighterHit 0.4s ease;
+}
+@keyframes fighterHit{
+0%,100%{filter:brightness(1)}
+25%{filter:brightness(2) hue-rotate(30deg)}
+50%{transform:translateX(-5px)}
+75%{transform:translateX(5px)}
+}
+.damage-number{
+position:absolute;
+font-size:24px;
+font-weight:700;
+color:#ff6b6b;
+text-shadow:0 0 10px #ff0000;
+animation:damageFloat 1s ease forwards;
+pointer-events:none;
+z-index:100;
+}
+@keyframes damageFloat{
+0%{opacity:1;transform:translateY(0) scale(1)}
+100%{opacity:0;transform:translateY(-50px) scale(1.5)}
+}
+.skill-effect{
+position:absolute;
+font-size:60px;
+animation:skillAnim 0.8s ease forwards;
+pointer-events:none;
+}
+@keyframes skillAnim{
+0%{opacity:0;transform:scale(0.5)}
+50%{opacity:1;transform:scale(1.2)}
+100%{opacity:0;transform:scale(1.5)}
+}
+</style>
+
+<!-- 赛事 -->
+<div class="panel-content" id="panel-tournament">
+<div class="tournament-card">
+<div class="title">🏆 街头争霸赛</div>
+<div class="desc">参与街头格斗，积累声望</div>
+<div class="reward">奖励：声望值 + 金币</div>
+<div class="progress">进度：<span id="street-progress">0</span>/10 场</div>
+<button class="btn bp bsm" style="margin-top:8px" onclick="tournamentFight('street')">参赛</button>
+</div>
+<div class="tournament-card">
+<div class="title">🌟 全国大赛</div>
+<div class="desc">全国范围的格斗赛事</div>
+<div class="reward">奖励：大量金币 + 稀有碎片</div>
+<div class="progress">进度：<span id="national-progress">0</span>/5 场</div>
+<button class="btn bp bsm" style="margin-top:8px" onclick="tournamentFight('national')">参赛</button>
+</div>
+<div class="tournament-card">
+<div class="title">👑 KOF 世界大赛</div>
+<div class="desc">世界最高水平的格斗赛事</div>
+<div class="reward">奖励：传说格斗家碎片 + 大量资源</div>
+<div class="progress">进度：<span id="world-progress">0</span>/3 场</div>
+<button class="btn bp bsm" style="margin-top:8px" onclick="tournamentFight('world')">参赛</button>
+</div>
+<div class="tournament-card" style="border-color:#ff6b6b;background:linear-gradient(135deg,#2a0a0a,#3a1a1a)">
+<div class="title" style="color:#ff6b6b;font-size:16px">🏟️ 竞技场</div>
+<div class="desc">与全服玩家竞技，争夺排名</div>
+<div class="reward" style="color:#ffd700">
+🥇 第 1 名：1000🦈 10 万💎 100 万💰<br>
+🥈 第 2 名：500🦈 5 万💎 50 万💰<br>
+🥉 第 3-10 名：100🦈 1 万💎 10 万💰
+</div>
+<div class="progress">当前排名：<span id="arena-rank" style="color:#ff6b6b;font-weight:700">--</span> / 100</div>
+<div class="progress">上次领奖：<span id="arena-last-claim" style="color:#888">未领取</span></div>
+<button class="btn bshark bsm" style="margin-top:8px" onclick="updateArenaRank()">🔄 刷新排名</button>
+<button class="btn bgr bsm" style="margin-top:8px" onclick="claimArenaReward()">🎁 领取奖励</button>
+</div>
+</div>
+
+<!-- 每日签到 -->
+<div class="panel-content" id="panel-daily">
+<div class="tournament-card">
+<div class="title">📅 每日签到</div>
+<div class="desc">每日登录领取 288 鲨币</div>
+<button class="btn bshark bsm" id="btn-daily" onclick="dailyCheck()">领取 288🦈</button>
+</div>
+</div>
+
+<!-- VIP 特权 -->
+<div class="panel-content" id="panel-vip">
+<div class="tournament-card">
+<div class="title">👑 VIP 特权</div>
+<div class="desc">鲨币达到要求自动升级 VIP，升星消耗万能碎片减免！</div>
+<div id="vip-list"></div>
+</div>
+</div>
+
+<!-- 格斗家召唤 -->
+<div class="panel-content" id="panel-summon">
+<div class="tournament-card">
+<div class="title">🔮 格斗家召唤</div>
+<div class="desc">消耗金币召唤格斗家</div>
+<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0">
+<button class="btn bp" onclick="summon(1)">单次 (500💰)</button>
+<button class="btn bg" onclick="summon(10)">十连 (5000💰)</button>
+<button class="btn bpu" onclick="summon(100)">百次 (5 万💰)</button>
+<button class="btn bshark" onclick="summon(1000)">千次 (50 万💰)</button>
+</div>
+<div style="font-size:11px;color:#888;text-align:center">
+15 资质 1% | 14 资质 3% | 13 资质 6% | 12 资质 10% | 11 资质 15% | 10 资质 20% | 9 资质 25% | 8 资质 20%
+</div>
+<div style="font-size:10px;color:#ff0066;text-align:center;margin-top:5px">⚠️ 16 资质格斗家仅限限时魂匣抽取</div>
+<div id="summon-result-container"></div>
+</div>
+</div>
+
+<!-- 限时魂匣 -->
+<div class="panel-content" id="panel-soul">
+<div class="soul-box">
+<div class="soul-icon">👻</div>
+<div class="soul-name" id="soul-fighter-name">加载中...</div>
+<div class="soul-rate">抽取概率：1/188 | 未中奖奖励：2000💎</div>
+<div style="display:flex;gap:10px;justify-content:center;margin:10px 0">
+<button class="btn bshark" onclick="summonSoul(1)">单次 (100🦈)</button>
+<button class="btn bpu" onclick="summonSoul(10)">十连 (1000🦈)</button>
+</div>
+<div id="soul-result" style="margin-top:10px;font-size:11px;color:#888;min-height:30px"></div>
+<div style="font-size:11px;color:#888">每天刷新一次，今日限定格斗家</div>
+</div>
+</div>
+
+<!-- 鲨币商城 -->
+<div class="panel-content" id="panel-shop">
+<div class="tournament-card">
+<div class="title">🦈 鲨币商城</div>
+<div class="desc">188 元 = 1,000,000 鲨币</div>
+<button class="btn bshark bsm" onclick="buyShark()">购买鲨币</button>
+</div>
+<div class="tournament-card" style="margin-top:10px">
+<div class="title">⚡ 体力购买</div>
+<div class="desc">100 鲨币 = 50 体力</div>
+<div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px">
+<input type="checkbox" id="chk-auto-energy" onchange="toggleAutoEnergy()" ${game.autoBuyEnergy ? 'checked' : ''}>
+<span>自动购买 (100🦈=50⚡)</span>
+</label>
+<button class="btn benergy bsm" onclick="buyEnergy()">购买 50 体力 (100🦈)</button>
+</div>
+</div>
+</div>
+
+<!-- CDK 兑换 -->
+<div class="panel-content" id="panel-cdk">
+<div class="tournament-card">
+<div class="title">🎁 礼包码兑换</div>
+<div class="desc" style="margin-bottom:10px">输入礼包码领取丰厚奖励</div>
+<div style="background:#1a1a2e;border:1px solid #4a90d9;border-radius:8px;padding:10px;margin-bottom:10px">
+<div style="font-size:11px;color:#4a90d9;margin-bottom:5px">🔥 热门礼包码：</div>
+<div style="font-size:10px;color:#888;line-height:1.8">
+<div>🎁 <span style="color:#ffd700">shayu666</span> - 10 万💰 1 万💎 666🦈</div>
+</div>
+</div>
+<input type="text" class="input-box" id="cdk-input" placeholder="请输入礼包码" style="margin-bottom:10px">
+<button class="btn bpu bsm bblk" onclick="redeemCDK()">🎁 立即兑换</button>
+<div id="cdk-result" style="margin-top:10px;font-size:11px;"></div>
+</div>
+</div>
+
+<!-- 赞助说明 -->
+<div class="panel-content" id="panel-sponsor">
+<div class="sponsor-box">
+<h4>🎁 特权礼包</h4>
+<p>赞助联系 V：<span class="wechat">282265901</span></p>
+<p>特权礼包 20 元，每日奖励：1,000,000💰 100,000💎 5000🦈</p>
+<p style="color:#ffd700;font-weight:700;margin-top:8px">188 元购买 100 万鲨币，抽卡抽到嗨翻！</p>
+<div id="privilege-pack-section" style="margin-top:10px">
+<button class="btn bshark bblk" onclick="buyPrivilegePack()">💳 购买特权礼包 (5000🦈)</button>
+</div>
+<div id="privilege-pack-claim" style="margin-top:10px;display:none">
+<div style="font-size:11px;color:#2ecc71;margin-bottom:5px">✅ 已购买，今日<span id="privilege-claim-status" style="color:#ffd700">可领取</span></div>
+<button class="btn bgr bblk" onclick="claimPrivilegePack()" id="btn-claim-privilege" disabled>🎁 领取每日奖励</button>
+</div>
+</div>
+<div class="sponsor-box">
+<h4>💝 赞助说明</h4>
+<p>首先鲨鱼谢谢你们的关注，很多功能开发中，也在陆续完善。</p>
+<p>赞助联系 V：<span class="wechat">282265901</span></p>
+<p>您的支持是我最大的动力！</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 召唤结果弹窗 -->
+<div class="modal-o" id="summon-modal">
+<div class="modal">
+<h3 id="summon-title">🎉 召唤成功！</h3>
+<div id="summon-result" style="font-size:14px;margin:15px 0"></div>
+<button class="btn bo" onclick="closeSummon()">关闭</button>
+</div>
+</div>
+
+
+
+
+
+<script>
+console.log('=== 脚本开始加载 ===');
+console.log('当前时间:', new Date().toLocaleTimeString());
+
+// 全局错误处理
+window.onerror = function(msg, url, line, col, error) {
+console.error('====== 全局错误 ======');
+console.error('错误信息:', msg);
+console.error('文件:', url);
+console.error('行号:', line);
+console.error('列号:', col);
+console.error('错误对象:', error);
+console.error('========================');
+return false;
+};
+
+// 测试按钮点击
+window.testNav = function() {
+console.log('测试按钮被点击');
+};
+window.testClick = function() {
+console.log('testClick 被调用');
+alert('测试成功！');
+};
+// 16 资质格斗家 (仅魂匣)
+const soul16Fighters = [
+{name:'再临★那雅典',quality:16,icon:'😈',skills:['暗黑那雅典','灵魂收割','死亡之吻','终极那雅典','末日降临'],baseAtk:200,baseHp:400,maxStars:800},
+{name:'再临★霸王丸',quality:16,icon:'⚔️',skills:['霸王烈风斩','天霸封神斩','天霸断空斩','终极霸王斩','武神降临'],baseAtk:210,baseHp:390,maxStars:800},
+{name:'再临★丽安娜',quality:16,icon:'🔪',skills:['月光锯·改','重力风暴·改','旋转火花·改','终极 X 炮','杀手领域'],baseAtk:195,baseHp:410,maxStars:800},
+{name:'再临★真 ZERO',quality:16,icon:'👊',skills:['真·地狱之门','真·百万大锤','真·干涸大地','真·末日审判','真·零式最终'],baseAtk:205,baseHp:420,maxStars:800},
+{name:'再临★大蛇',quality:16,icon:'🌪️',skills:['黑粒子·改','不可触碰·改','掏魂·改','阳光普照·改','混·终极'],baseAtk:220,baseHp:450,maxStars:800},
+{name:'再临★斋祀',quality:16,icon:'🔥',skills:['冥炎','时间停止','灵魂燃烧','终极冥炎','时空毁灭'],baseAtk:215,baseHp:430,maxStars:800},
+{name:'孙悟空',quality:16,icon:'🐵',skills:['如意金箍棒','七十二变','筋斗云','火眼金睛','齐天大圣'],baseAtk:220,baseHp:450,maxStars:800},
+{name:'唐僧',quality:16,icon:'🧙',skills:['紧箍咒','紧箍咒·改','紧箍咒·终','紧箍咒·极','紧箍咒·神'],baseAtk:180,baseHp:500,maxStars:800},
+{name:'猪八戒',quality:16,icon:'🐷',skills:['九齿钉耙','天蓬元帅','天蓬元帅·改','天蓬元帅·终','天蓬元帅·极'],baseAtk:200,baseHp:480,maxStars:800},
+{name:'沙僧',quality:16,icon:'👹',skills:['降妖宝杖','流沙河','流沙河·改','流沙河·终','流沙河·极'],baseAtk:190,baseHp:470,maxStars:800},
+{name:'白龙马',quality:16,icon:'🐉',skills:['龙吟','龙吟·改','龙吟·终','龙吟·极','龙吟·神'],baseAtk:195,baseHp:460,maxStars:800},
+{name:'观音菩萨',quality:16,icon:'🙏',skills:['净瓶甘露','净瓶甘露·改','净瓶甘露·终','净瓶甘露·极','净瓶甘露·神'],baseAtk:210,baseHp:490,maxStars:800},
+{name:'如来佛祖',quality:16,icon:'☸️',skills:['如来神掌','如来神掌·改','如来神掌·终','如来神掌·极','如来神掌·神'],baseAtk:230,baseHp:500,maxStars:800},
+{name:'二郎神',quality:16,icon:'👁️',skills:['三尖两刃刀','三尖两刃刀·改','三尖两刃刀·终','三尖两刃刀·极','三尖两刃刀·神'],baseAtk:215,baseHp:480,maxStars:800},
+];
+
+// 格斗家数据库
+const fightersDB = [
+{name:'草薙京',quality:15,icon:'🔥',skills:['百八式·暗拂','百式·鬼烧','七十五式·改','大蛇薙','无式'],baseAtk:150,baseHp:300,maxStars:300},
+{name:'八神庵',quality:15,icon:'🌙',skills:['百八式·暗拂','百八式·八酒杯','百式·鬼烧','禁千贰百拾壹式·八稚女','里百八式·八酒杯'],baseAtk:155,baseHp:290,maxStars:300},
+{name:'大蛇',quality:15,icon:'🌪️',skills:['黑粒子','不可触碰','掏魂','阳光普照','混'],baseAtk:160,baseHp:320,maxStars:300},
+{name:'特瑞',quality:14,icon:'🧢',skills:['能量波','能量补充','火焰冲拳','能量喷泉','高轨喷泉'],baseAtk:130,baseHp:270,maxStars:200},
+{name:'不知火舞',quality:14,icon:'🦋',skills:['花蝶扇','龙炎舞','飞翔龙炎阵','必杀忍蜂','超必杀忍蜂'],baseAtk:125,baseHp:250,maxStars:200},
+{name:'坂崎良',quality:14,icon:'🥋',skills:['虎煌拳','极限流·虎咆','飞燕疾风脚','霸王翔吼拳','天地霸王拳'],baseAtk:128,baseHp:275,maxStars:200},
+{name:'二阶堂红丸',quality:14,icon:'⚡',skills:['雷韧拳','飞翔脚','居合踢','雷光拳','大雷光拳'],baseAtk:120,baseHp:260,maxStars:200},
+{name:'麻宫雅典娜',quality:13,icon:'🎀',skills:['精神力球','精神力反射','凤凰弹','凤凰箭','凤凰飞天'],baseAtk:110,baseHp:240,maxStars:150},
+{name:'罗伯特',quality:13,icon:'🐉',skills:['龙击拳','龙牙','飞燕旋风脚','龙虎乱舞','霸王翔吼拳'],baseAtk:115,baseHp:250,maxStars:150},
+{name:'大门五郎',quality:13,icon:'🥌',skills:['地雷震','超受身','天地返','岚之山','天地返·改'],baseAtk:105,baseHp:280,maxStars:150},
+{name:'拉尔夫',quality:13,icon:'💪',skills:['机炮拳','急降下爆弹拳','超级阿根廷攻击','宇宙幻影','银河幻影'],baseAtk:112,baseHp:270,maxStars:150},
+{name:'克拉克',quality:13,icon:'🤠',skills:['跳入攻击','弗兰肯必杀投','超级阿根廷投技','跑动投掷','终结阿根廷攻击'],baseAtk:108,baseHp:275,maxStars:150},
+{name:'莉安娜',quality:12,icon:'🔪',skills:['月光锯','X 炮','重力风暴','旋转火花','杀手钻'],baseAtk:100,baseHp:230,maxStars:150},
+{name:'七枷社',quality:12,icon:'🌋',skills:['敲大锤','升龙决斗','干涸大地','百万大锤','末日审判'],baseAtk:105,baseHp:250,maxStars:150},
+{name:'夏尔米',quality:12,icon:'⚡',skills:['夏尔米站立','夏尔米旋转','夏尔米重炮','雷电云','雷电拳'],baseAtk:95,baseHp:240,maxStars:150},
+{name:'克里斯',quality:12,icon:'🔥',skills:['针刺','滑步踢','偷猎者','滑行射击','百万吨轰击'],baseAtk:98,baseHp:235,maxStars:150},
+{name:'矢吹真吾',quality:11,icon:'📓',skills:['百式·鬼烧·改','百八式·暗拂·改','外式·轰斧','百式·鬼烧·真','真·大蛇薙'],baseAtk:85,baseHp:210,maxStars:150},
+{name:'玛丽',quality:11,icon:'🎱',skills:['旋转落','垂直箭头','蜘蛛固','野性之山','玛丽玫瑰'],baseAtk:82,baseHp:220,maxStars:150},
+{name:'山崎龙二',quality:11,icon:'🔪',skills:['蛇使·上段','蛇使·中段','蛇使·下段','倍返','断头台'],baseAtk:88,baseHp:215,maxStars:150},
+{name:'布鲁·玛丽',quality:11,icon:'🎗️',skills:['垂直箭头','旋转落','蜘蛛固','玛丽台风','玛丽玫瑰'],baseAtk:80,baseHp:225,maxStars:150},
+{name:'金家藩',quality:10,icon:'🥋',skills:['飞翔脚','半月斩','多拉 D 踢','凤凰脚','凤凰天舞'],baseAtk:70,baseHp:200,maxStars:100},
+{name:'陈可汉',quality:10,icon:'⛓️',skills:['铁球飞','铁球粉碎击','铁球大回转','铁球大暴走','铁球压杀'],baseAtk:75,baseHp:220,maxStars:100},
+{name:'蔡宝奇',quality:10,icon:'🦅',skills:['龙卷风','飞翔空裂斩','方向转换·急降下','真！超绝龙卷疾风斩','凤凰脚'],baseAtk:72,baseHp:190,maxStars:100},
+{name:'比利',quality:10,icon:'🥢',skills:['三节棍攻击','火炎三节棍','大回转','旋元杀棍','超火炎旋风棍'],baseAtk:68,baseHp:205,maxStars:100},
+{name:'藤堂香澄',quality:9,icon:'🌸',skills:['飞燕疾风脚','重击','烈风脚','飞燕龙炎脚','霸王翔吼拳'],baseAtk:60,baseHp:180,maxStars:100},
+{name:'如月影二',quality:9,icon:'🥷',skills:['气功拳','影舞','胧车','暗流','霸翔'],baseAtk:62,baseHp:175,maxStars:100},
+{name:'李香绯',quality:9,icon:'🐼',skills:['超球弹','天舞脚','大破坏投','超球弹·改','天舞脚·改'],baseAtk:58,baseHp:185,maxStars:100},
+{name:'东丈',quality:9,icon:'🥊',skills:['低踢','滑步','飓风勾拳','虎破脚','爆烈拳'],baseAtk:65,baseHp:190,maxStars:100},
+{name:'坂崎百合',quality:8,icon:'🌺',skills:['百合折','空牙','根付','百合乱舞','百合超必杀'],baseAtk:50,baseHp:160,maxStars:100},
+{name:'琼',quality:8,icon:'🍸',skills:['毒蛇击','落地击','龙卷踢','幻影踢','玫瑰攻击'],baseAtk:48,baseHp:165,maxStars:100},
+{name:'神乐千鹤',quality:8,icon:'🪶',skills:['百活·天神之理','百活·天神之舞','百活·零式之舞','神速之祝词','天瑞'],baseAtk:52,baseHp:170,maxStars:100},
+{name:'麦卓',quality:8,icon:'💄',skills:['死亡之爪','大金属','天堂之门','血腥之镜','死亡诱惑'],baseAtk:55,baseHp:155,maxStars:100},
+// 西游记人物 - 16 资质 (8 个，只能魂匣抽出)
+{name:'孙悟空',quality:16,icon:'🐵',skills:['如意金箍棒','七十二变','筋斗云','火眼金睛','齐天大圣'],baseAtk:220,baseHp:450,maxStars:800},
+{name:'唐僧',quality:16,icon:'🧙',skills:['紧箍咒','紧箍咒·改','紧箍咒·终','紧箍咒·极','紧箍咒·神'],baseAtk:180,baseHp:500,maxStars:800},
+{name:'猪八戒',quality:16,icon:'🐷',skills:['九齿钉耙','天蓬元帅','天蓬元帅·改','天蓬元帅·终','天蓬元帅·极'],baseAtk:200,baseHp:480,maxStars:800},
+{name:'沙僧',quality:16,icon:'👹',skills:['降妖宝杖','流沙河','流沙河·改','流沙河·终','流沙河·极'],baseAtk:190,baseHp:470,maxStars:800},
+{name:'白龙马',quality:16,icon:'🐉',skills:['龙吟','龙吟·改','龙吟·终','龙吟·极','龙吟·神'],baseAtk:195,baseHp:460,maxStars:800},
+{name:'观音菩萨',quality:16,icon:'🙏',skills:['净瓶甘露','净瓶甘露·改','净瓶甘露·终','净瓶甘露·极','净瓶甘露·神'],baseAtk:210,baseHp:490,maxStars:800},
+{name:'如来佛祖',quality:16,icon:'☸️',skills:['如来神掌','如来神掌·改','如来神掌·终','如来神掌·极','如来神掌·神'],baseAtk:230,baseHp:500,maxStars:800},
+{name:'二郎神',quality:16,icon:'👁️',skills:['三尖两刃刀','三尖两刃刀·改','三尖两刃刀·终','三尖两刃刀·极','三尖两刃刀·神'],baseAtk:215,baseHp:480,maxStars:800},
+// 西游记人物 - 15 资质 (12 个)
+{name:'牛魔王',quality:15,icon:'🐂',skills:['牛魔拳','牛魔拳·改','牛魔拳·终','牛魔拳·极','牛魔拳·神'],baseAtk:165,baseHp:330,maxStars:300},
+{name:'红孩儿',quality:15,icon:'🔥',skills:['三昧真火','三昧真火·改','三昧真火·终','三昧真火·极','三昧真火·神'],baseAtk:170,baseHp:310,maxStars:300},
+{name:'铁扇公主',quality:15,icon:'👸',skills:['芭蕉扇','芭蕉扇·改','芭蕉扇·终','芭蕉扇·极','芭蕉扇·神'],baseAtk:160,baseHp:320,maxStars:300},
+{name:'白骨精',quality:15,icon:'💀',skills:['白骨爪','白骨爪·改','白骨爪·终','白骨爪·极','白骨爪·神'],baseAtk:168,baseHp:300,maxStars:300},
+{name:'蜘蛛精',quality:15,icon:'🕷️',skills:['蛛丝缚','蛛丝缚·改','蛛丝缚·终','蛛丝缚·极','蛛丝缚·神'],baseAtk:155,baseHp:310,maxStars:300},
+{name:'蝎子精',quality:15,icon:'🦂',skills:['毒蝎尾','毒蝎尾·改','毒蝎尾·终','毒蝎尾·极','毒蝎尾·神'],baseAtk:162,baseHp:305,maxStars:300},
+{name:'老鼠精',quality:15,icon:'🐀',skills:['地洞术','地洞术·改','地洞术·终','地洞术·极','地洞术·神'],baseAtk:158,baseHp:315,maxStars:300},
+{name:'狮子精',quality:15,icon:'🦁',skills:['狮吼功','狮吼功·改','狮吼功·终','狮吼功·极','狮吼功·神'],baseAtk:165,baseHp:325,maxStars:300},
+{name:'大鹏金翅雕',quality:15,icon:'🦅',skills:['金翅展翅','金翅展翅·改','金翅展翅·终','金翅展翅·极','金翅展翅·神'],baseAtk:172,baseHp:310,maxStars:300},
+{name:'九头虫',quality:15,icon:'🐛',skills:['九头攻击','九头攻击·改','九头攻击·终','九头攻击·极','九头攻击·神'],baseAtk:160,baseHp:320,maxStars:300},
+{name:'黄眉怪',quality:15,icon:'👹',skills:['金铙','金铙·改','金铙·终','金铙·极','金铙·神'],baseAtk:158,baseHp:315,maxStars:300},
+{name:'青牛精',quality:15,icon:'🐄',skills:['金刚琢','金刚琢·改','金刚琢·终','金刚琢·极','金刚琢·神'],baseAtk:163,baseHp:318,maxStars:300},
+// 西游记人物 - 14 资质及以下 (80 个)
+{name:'黑熊精',quality:14,icon:'🐻',skills:['黑熊掌','黑熊掌·改','黑熊掌·终','黑熊掌·极','黑熊掌·神'],baseAtk:135,baseHp:275,maxStars:200},
+{name:'黄风怪',quality:14,icon:'🌪️',skills:['黄风','黄风·改','黄风·终','黄风·极','黄风·神'],baseAtk:132,baseHp:270,maxStars:200},
+{name:'灵感大王',quality:14,icon:'🐟',skills:['水攻','水攻·改','水攻·终','水攻·极','水攻·神'],baseAtk:130,baseHp:280,maxStars:200},
+{name:'独角兕大王',quality:14,icon:'🦄',skills:['独角冲','独角冲·改','独角冲·终','独角冲·极','独角冲·神'],baseAtk:138,baseHp:275,maxStars:200},
+{name:'如意真仙',quality:14,icon:'🧙',skills:['如意棒','如意棒·改','如意棒·终','如意棒·极','如意棒·神'],baseAtk:128,baseHp:265,maxStars:200},
+{name:'蟒蛇精',quality:14,icon:'🐍',skills:['缠绕','缠绕·改','缠绕·终','缠绕·极','缠绕·神'],baseAtk:125,baseHp:270,maxStars:200},
+{name:'蜈蚣精',quality:14,icon:'🐛',skills:['百足攻击','百足攻击·改','百足攻击·终','百足攻击·极','百足攻击·神'],baseAtk:130,baseHp:260,maxStars:200},
+{name:'狐狸精',quality:14,icon:'🦊',skills:['魅惑','魅惑·改','魅惑·终','魅惑·极','魅惑·神'],baseAtk:120,baseHp:250,maxStars:200},
+{name:'虎先锋',quality:13,icon:'🐯',skills:['虎爪','虎爪·改','虎爪·终','虎爪·极','虎爪·神'],baseAtk:118,baseHp:255,maxStars:150},
+{name:'鹿力大仙',quality:13,icon:'🦌',skills:['鹿角顶','鹿角顶·改','鹿角顶·终','鹿角顶·极','鹿角顶·神'],baseAtk:115,baseHp:250,maxStars:150},
+{name:'羊力大仙',quality:13,icon:'🐐',skills:['羊角撞','羊角撞·改','羊角撞·终','羊角撞·极','羊角撞·神'],baseAtk:112,baseHp:245,maxStars:150},
+{name:'豹子精',quality:13,icon:'🐆',skills:['豹爪','豹爪·改','豹爪·终','豹爪·极','豹爪·神'],baseAtk:120,baseHp:240,maxStars:150},
+{name:'大象精',quality:13,icon:'🐘',skills:['象鼻卷','象鼻卷·改','象鼻卷·终','象鼻卷·极','象鼻卷·神'],baseAtk:125,baseHp:260,maxStars:150},
+{name:'白象王',quality:13,icon:'🐘',skills:['白象冲','白象冲·改','白象冲·终','白象冲·极','白象冲·神'],baseAtk:128,baseHp:265,maxStars:150},
+{name:'金翅大鹏',quality:13,icon:'🦅',skills:['金翅击','金翅击·改','金翅击·终','金翅击·极','金翅击·神'],baseAtk:122,baseHp:250,maxStars:150},
+{name:'云程万里鹏',quality:13,icon:'🦅',skills:['万里飞行','万里飞行·改','万里飞行·终','万里飞行·极','万里飞行·神'],baseAtk:120,baseHp:245,maxStars:150},
+{name:'六耳猕猴',quality:12,icon:'🐵',skills:['六耳听','六耳听·改','六耳听·终','六耳听·极','六耳听·神'],baseAtk:108,baseHp:235,maxStars:150},
+{name:'通天河妖',quality:12,icon:'🐟',skills:['水柱','水柱·改','水柱·终','水柱·极','水柱·神'],baseAtk:105,baseHp:230,maxStars:150},
+{name:'火焰山土地',quality:12,icon:'🌋',skills:['地火','地火·改','地火·终','地火·极','地火·神'],baseAtk:102,baseHp:225,maxStars:150},
+{name:'铁扇仙',quality:12,icon:'🧚',skills:['仙风','仙风·改','仙风·终','仙风·极','仙风·神'],baseAtk:100,baseHp:220,maxStars:150},
+{name:'玉面狐狸',quality:11,icon:'🦊',skills:['玉面击','玉面击·改','玉面击·终','玉面击·极','玉面击·神'],baseAtk:95,baseHp:215,maxStars:150},
+{name:'碧波潭龙女',quality:11,icon:'🧜',skills:['水波','水波·改','水波·终','水波·极','水波·神'],baseAtk:92,baseHp:210,maxStars:150},
+{name:'万圣龙王',quality:11,icon:'🐉',skills:['龙息','龙息·改','龙息·终','龙息·极','龙息·神'],baseAtk:98,baseHp:220,maxStars:150},
+{name:'九头驸马',quality:11,icon:'🐴',skills:['九头击','九头击·改','九头击·终','九头击·极','九头击·神'],baseAtk:95,baseHp:215,maxStars:150},
+{name:'杏仙',quality:10,icon:'🌸',skills:['花粉','花粉·改','花粉·终','花粉·极','花粉·神'],baseAtk:85,baseHp:200,maxStars:100},
+{name:'树精',quality:10,icon:'🌳',skills:['藤蔓','藤蔓·改','藤蔓·终','藤蔓·极','藤蔓·神'],baseAtk:82,baseHp:205,maxStars:100},
+{name:'藤精',quality:10,icon:'🌿',skills:['缠绕击','缠绕击·改','缠绕击·终','缠绕击·极','缠绕击·神'],baseAtk:80,baseHp:200,maxStars:100},
+{name:'花精',quality:10,icon:'🌺',skills:['花瓣舞','花瓣舞·改','花瓣舞·终','花瓣舞·极','花瓣舞·神'],baseAtk:78,baseHp:195,maxStars:100},
+{name:'草精',quality:10,icon:'🌱',skills:['草叶斩','草叶斩·改','草叶斩·终','草叶斩·极','草叶斩·神'],baseAtk:75,baseHp:190,maxStars:100},
+{name:'木精',quality:10,icon:'🪵',skills:['木击','木击·改','木击·终','木击·极','木击·神'],baseAtk:72,baseHp:185,maxStars:100},
+{name:'水精',quality:9,icon:'💧',skills:['水滴','水滴·改','水滴·终','水滴·极','水滴·神'],baseAtk:68,baseHp:180,maxStars:100},
+{name:'火精',quality:9,icon:'🔥',skills:['火球','火球·改','火球·终','火球·极','火球·神'],baseAtk:70,baseHp:175,maxStars:100},
+{name:'土精',quality:9,icon:'🪨',skills:['土块','土块·改','土块·终','土块·极','土块·神'],baseAtk:65,baseHp:185,maxStars:100},
+{name:'风精',quality:9,icon:'💨',skills:['风刃','风刃·改','风刃·终','风刃·极','风刃·神'],baseAtk:72,baseHp:170,maxStars:100},
+{name:'雷精',quality:9,icon:'⚡',skills:['雷电','雷电·改','雷电·终','雷电·极','雷电·神'],baseAtk:75,baseHp:165,maxStars:100},
+{name:'云精',quality:9,icon:'☁️',skills:['云击','云击·改','云击·终','云击·极','云击·神'],baseAtk:62,baseHp:175,maxStars:100},
+{name:'雾精',quality:9,icon:'🌫️',skills:['雾隐','雾隐·改','雾隐·终','雾隐·极','雾隐·神'],baseAtk:60,baseHp:180,maxStars:100},
+{name:'雪精',quality:8,icon:'❄️',skills:['雪花','雪花·改','雪花·终','雪花·极','雪花·神'],baseAtk:55,baseHp:165,maxStars:100},
+{name:'冰精',quality:8,icon:'🧊',skills:['冰锥','冰锥·改','冰锥·终','冰锥·极','冰锥·神'],baseAtk:58,baseHp:160,maxStars:100},
+{name:'霜精',quality:8,icon:'❄️',skills:['霜冻','霜冻·改','霜冻·终','霜冻·极','霜冻·神'],baseAtk:52,baseHp:165,maxStars:100},
+{name:'雨精',quality:8,icon:'🌧️',skills:['雨滴','雨滴·改','雨滴·终','雨滴·极','雨滴·神'],baseAtk:50,baseHp:170,maxStars:100},
+{name:'露精',quality:8,icon:'💧',skills:['露珠','露珠·改','露珠·终','露珠·极','露珠·神'],baseAtk:48,baseHp:175,maxStars:100},
+{name:'霞精',quality:8,icon:'🌅',skills:['霞光','霞光·改','霞光·终','霞光·极','霞光·神'],baseAtk:55,baseHp:160,maxStars:100},
+{name:'虹精',quality:8,icon:'🌈',skills:['彩虹','彩虹·改','彩虹·终','彩虹·极','彩虹·神'],baseAtk:52,baseHp:165,maxStars:100},
+{name:'星精',quality:8,icon:'⭐',skills:['星光','星光·改','星光·终','星光·极','星光·神'],baseAtk:58,baseHp:155,maxStars:100},
+{name:'月精',quality:8,icon:'🌙',skills:['月光','月光·改','月光·终','月光·极','月光·神'],baseAtk:55,baseHp:160,maxStars:100},
+{name:'日精',quality:8,icon:'☀️',skills:['日光','日光·改','日光·终','日光·极','日光·神'],baseAtk:60,baseHp:155,maxStars:100},
+{name:'天兵',quality:7,icon:'👮',skills:['天击','天击·改','天击·终','天击·极','天击·神'],baseAtk:45,baseHp:150,maxStars:100},
+{name:'天将',quality:7,icon:'🛡️',skills:['天盾','天盾·改','天盾·终','天盾·极','天盾·神'],baseAtk:48,baseHp:155,maxStars:100},
+{name:'小妖',quality:6,icon:'👹',skills:['妖击','妖击·改','妖击·终','妖击·极','妖击·神'],baseAtk:40,baseHp:140,maxStars:100},
+{name:'小怪',quality:6,icon:'👾',skills:['怪击','怪击·改','怪击·终','怪击·极','怪击·神'],baseAtk:38,baseHp:135,maxStars:100},
+{name:'小鬼',quality:6,icon:'👻',skills:['鬼爪','鬼爪·改','鬼爪·终','鬼爪·极','鬼爪·神'],baseAtk:42,baseHp:130,maxStars:100},
+{name:'小仙',quality:7,icon:'🧚',skills:['仙法','仙法·改','仙法·终','仙法·极','仙法·神'],baseAtk:50,baseHp:145,maxStars:100},
+{name:'小神',quality:7,icon:'✨',skills:['神力','神力·改','神力·终','神力·极','神力·神'],baseAtk:52,baseHp:150,maxStars:100},
+{name:'小龙',quality:8,icon:'🐲',skills:['龙击','龙击·改','龙击·终','龙击·极','龙击·神'],baseAtk:58,baseHp:165,maxStars:100},
+{name:'小凤',quality:8,icon:'🦚',skills:['凤舞','凤舞·改','凤舞·终','凤舞·极','凤舞·神'],baseAtk:55,baseHp:160,maxStars:100},
+{name:'小麒麟',quality:8,icon:'🦄',skills:['麒麟顶','麒麟顶·改','麒麟顶·终','麒麟顶·极','麒麟顶·神'],baseAtk:60,baseHp:170,maxStars:100},
+{name:'小貔貅',quality:8,icon:'🦁',skills:['貔貅咬','貔貅咬·改','貔貅咬·终','貔貅咬·极','貔貅咬·神'],baseAtk:62,baseHp:165,maxStars:100},
+{name:'小饕餮',quality:8,icon:'👹',skills:['饕餮吞','饕餮吞·改','饕餮吞·终','饕餮吞·极','饕餮吞·神'],baseAtk:65,baseHp:160,maxStars:100},
+{name:'小混沌',quality:8,icon:'🌪️',skills:['混沌击','混沌击·改','混沌击·终','混沌击·极','混沌击·神'],baseAtk:58,baseHp:165,maxStars:100},
+{name:'小穷奇',quality:8,icon:'🦅',skills:['穷奇击','穷奇击·改','穷奇击·终','穷奇击·极','穷奇击·神'],baseAtk:60,baseHp:160,maxStars:100},
+{name:'小梼杌',quality:8,icon:'🐯',skills:['梼杌击','梼杌击·改','梼杌击·终','梼杌击·极','梼杌击·神'],baseAtk:62,baseHp:165,maxStars:100},
+{name:'山神',quality:9,icon:'⛰️',skills:['山崩','山崩·改','山崩·终','山崩·极','山崩·神'],baseAtk:68,baseHp:185,maxStars:100},
+{name:'河神',quality:9,icon:'🌊',skills:['水涌','水涌·改','水涌·终','水涌·极','水涌·神'],baseAtk:65,baseHp:180,maxStars:100},
+{name:'土地公',quality:9,icon:'👴',skills:['地裂','地裂·改','地裂·终','地裂·极','地裂·神'],baseAtk:62,baseHp:190,maxStars:100},
+{name:'城隍',quality:10,icon:'🏛️',skills:['城击','城击·改','城击·终','城击·极','城击·神'],baseAtk:75,baseHp:195,maxStars:100},
+{name:'门神',quality:10,icon:'🚪',skills:['门击','门击·改','门击·终','门击·极','门击·神'],baseAtk:78,baseHp:200,maxStars:100},
+{name:'灶神',quality:10,icon:'🔥',skills:['火神','火神·改','火神·终','火神·极','火神·神'],baseAtk:80,baseHp:195,maxStars:100},
+{name:'财神',quality:11,icon:'💰',skills:['财击','财击·改','财击·终','财击·极','财击·神'],baseAtk:85,baseHp:210,maxStars:150},
+{name:'福神',quality:11,icon:'🍀',skills:['福运','福运·改','福运·终','福运·极','福运·神'],baseAtk:82,baseHp:215,maxStars:150},
+{name:'禄神',quality:11,icon:'📜',skills:['禄运','禄运·改','禄运·终','禄运·极','禄运·神'],baseAtk:88,baseHp:205,maxStars:150},
+{name:'寿神',quality:11,icon:'🍑',skills:['寿元','寿元·改','寿元·终','寿元·极','寿元·神'],baseAtk:80,baseHp:220,maxStars:150},
+{name:'喜神',quality:11,icon:'🎉',skills:['喜气','喜气·改','喜气·终','喜气·极','喜气·神'],baseAtk:85,baseHp:210,maxStars:150},
+];
+
+// VIP 配置 (购买制，永久生效)
+const vipConfig = [
+{level:1,price:100,benefit:1},{level:2,price:300,benefit:2},{level:3,price:500,benefit:3},
+{level:4,price:1000,benefit:4},{level:5,price:1500,benefit:5},{level:6,price:2000,benefit:6},
+{level:7,price:3000,benefit:7},{level:8,price:5000,benefit:8},{level:9,price:8000,benefit:9},
+{level:10,price:12000,benefit:10},{level:11,price:20000,benefit:11},{level:12,price:30000,benefit:12},
+{level:13,price:50000,benefit:13},{level:14,price:80000,benefit:14},{level:15,price:120000,benefit:15},
+{level:16,price:160000,benefit:16},{level:17,price:200000,benefit:17},{level:18,price:300000,benefit:18},
+];
+
+// 导航配置
+const navConfig = {
+home: {title:'🏠 首页',subs:[]},
+roster: {title:'🎯 阵容',subs:[{id:'team',name:'🎯 出战阵容',icon:'⚔️'},{id:'fighters',name:'👥 格斗家',icon:'👥'}]},
+battle: {title:'⚔️ 战斗',subs:[]},
+tournament: {title:'🏆 赛事',subs:[]},
+activity: {title:'🎉 活动',subs:[
+{id:'daily',name:'📅 每日签到',icon:'📅'},{id:'vip',name:'👑 VIP 特权',icon:'👑'},{id:'summon',name:'🔮 格斗家召唤',icon:'🔮'},
+{id:'soul',name:'👻 限时魂匣',icon:'👻'},{id:'shop',name:'🦈 鲨币商城',icon:'🦈'},{id:'cdk',name:'🎫 CDK 兑换',icon:'🎫'},{id:'sponsor',name:'💝 赞助说明',icon:'💝'}
+]}
+};
+
+// 游戏状态
+let game = {
+gold: 5000,shard: 200,shark: 0,energy: 500,maxEnergy: 500,vip: 0,
+fighters: [],team: [],battleCount: 0,dailyChecked: false,lastCheckDate: null,
+tournaments: {street: 0, national: 0, world: 0},cdkUsed: [],
+autoBattle: false,soulFighter: null,lastSoulDate: null,dropRate: 1,soulStreak: 0,
+stages: {1: 1, 2: 1, 3: 1}, // 各难度关卡进度
+idleRewards: {gold: 0, shard: 0, lastClaim: Date.now()}, // 挂机收益
+privilegePackBought: false,privilegePackLastClaim: null, // 特权礼包
+vipBought: 0, // 已购买的 VIP 等级
+autoBuyEnergy: false, // 自动购买体力
+arena: {
+rank: 100,
+lastClaim: null,
+virtualPlayers: [] // 虚拟玩家数据
+}
+};
+
+// 已使用的礼包码（从存档加载）
+
+// 战斗状态
+let battleState = {
+playerTeam: [],enemyTeam: [],turn: 0,playerTurn: true,actionIndex: 0,battleLog: [],
+currentDifficulty: 1,isAnimating: false,autoBattle: false,paused: false,battleSpeed: 1
+};
+
+// 设置战斗速度
+function setBattleSpeed(speed) {
+battleState.battleSpeed = speed;
+document.getElementById('btn-speed-1').style.background = speed === 1 ? '#4a90d9' : '#333';
+document.getElementById('btn-speed-2').style.background = speed === 2 ? '#4a90d9' : '#333';
+document.getElementById('btn-speed-5').style.background = speed === 5 ? '#4a90d9' : '#333';
+}
+
+// 体力恢复定时器
+let energyTimer = null;
+
+// 设置导航
+function setupNavigation() {
+const navBtns = document.querySelectorAll('.nav-btn');
+console.log('导航按钮数量:', navBtns.length);
+if (navBtns.length === 0) {
+console.error('未找到导航按钮！');
+return;
+}
+navBtns.forEach(function(btn) {
+btn.onclick = function() {
+console.log('=== 导航按钮被点击 ===');
+const section = this.dataset.section;
+console.log('点击的 section:', section);
+navBtns.forEach(b => b.classList.remove('ac'));
+this.classList.add('ac');
+const subGrid = document.getElementById('sub-grid');
+const titleEl = document.getElementById('panel-title');
+document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('ac'));
+if (section === 'home') {
+subGrid.style.display = 'none';
+titleEl.textContent = '🏠 首页';
+document.getElementById('panel-home').classList.add('ac');
+} else if (section === 'roster') {
+subGrid.style.display = 'grid';
+subGrid.innerHTML = '<div class="sub-card ac" onclick="switchSubPanel(\'team\', this)"><div class="icon">⚔️</div><div class="name">🎯 出战阵容</div></div><div class="sub-card" onclick="switchSubPanel(\'fighters\', this)"><div class="icon">👥</div><div class="name">👥 格斗家</div></div>';
+titleEl.textContent = '🎯 阵容';
+document.getElementById('panel-team').classList.add('ac');
+setTimeout(renderTeam, 50);
+} else if (section === 'battle') {
+subGrid.style.display = 'none';
+titleEl.textContent = '⚔️ 战斗';
+document.getElementById('panel-battle').classList.add('ac');
+} else if (section === 'tournament') {
+subGrid.style.display = 'none';
+titleEl.textContent = '🏆 赛事';
+document.getElementById('panel-tournament').classList.add('ac');
+} else if (section === 'activity') {
+subGrid.style.display = 'grid';
+subGrid.innerHTML = '<div class="sub-card" onclick="switchSubPanel(\'daily\', this)"><div class="icon">📅</div><div class="name">📅 每日签到</div></div><div class="sub-card" onclick="switchSubPanel(\'vip\', this)"><div class="icon">👑</div><div class="name">👑 VIP 特权</div></div><div class="sub-card" onclick="switchSubPanel(\'summon\', this)"><div class="icon">🔮</div><div class="name">🔮 格斗家召唤</div></div><div class="sub-card" onclick="switchSubPanel(\'soul\', this)"><div class="icon">👻</div><div class="name">👻 限时魂匣</div></div><div class="sub-card" onclick="switchSubPanel(\'shop\', this)"><div class="icon">🦈</div><div class="name">🦈 鲨币商城</div></div><div class="sub-card" onclick="switchSubPanel(\'cdk\', this)"><div class="icon">🎫</div><div class="name">🎫 CDK 兑换</div></div><div class="sub-card" onclick="switchSubPanel(\'sponsor\', this)"><div class="icon">💝</div><div class="name">💝 赞助说明</div></div>';
+titleEl.textContent = '🎉 活动';
+document.getElementById('panel-daily').classList.add('ac');
+}
+console.log('导航设置完成');
+};
+});
+}
+
+// 初始化
+function init() {
+console.log('=== 游戏初始化开始 ===');
+try {
+console.log('1. 加载存档...');
+loadGame();
+console.log('存档加载后状态 - 金币:', game.gold, '体力:', game.energy, '格斗家数量:', game.fighters.length);
+console.log('2. 检查 VIP...');
+checkVIP();
+console.log('3. 检查魂匣...');
+checkSoulFighter();
+console.log('4. 检查每日重置...');
+checkDailyReset();
+console.log('5. 更新关卡显示...');
+updateStageDisplay();
+console.log('6. 更新特权显示...');
+updatePrivilegeDisplay();
+
+// 设置导航
+console.log('7. 设置导航...');
+setupNavigation();
+
+console.log('8. 更新 UI...');
+updateUI();
+console.log('9. 启动体力恢复...');
+startEnergyRecovery();
+console.log('10. 启动挂机收益...');
+startIdleRewards();
+console.log('11. 渲染 VIP...');
+renderVIP();
+console.log('=== 游戏初始化完成 ===');
+} catch(e) {
+console.error('=== 初始化错误 ===');
+console.error('错误:', e.message);
+console.error('堆栈:', e.stack);
+}
+}
+
+// 显示面板
+function showPanel(panelId) {
+console.log('显示面板:', panelId);
+document.querySelectorAll('.panel-content').forEach(function(p) { p.classList.remove('ac'); });
+const panel = document.getElementById('panel-' + panelId);
+if (panel) {
+panel.classList.add('ac');
+console.log('面板显示成功:', panelId);
+}
+if (panelId === 'team') {
+renderTeam();
+} else if (panelId === 'fighters') {
+renderFighters();
+} else if (panelId === 'vip') {
+renderVIP();
+} else if (panelId === 'soul') {
+renderSoul();
+}
+}
+
+function switchSubPanel(panelId, btn) {
+document.querySelectorAll('.sub-card').forEach(c => c.classList.remove('ac'));
+btn.classList.add('ac');
+showPanel(panelId);
+}
+
+// 关闭召唤弹窗
+function closeSummon() {
+document.getElementById('summon-modal').classList.remove('show');
+}
+
+// 页面加载完成后初始化
+window.addEventListener('load', function() {
+console.log('页面加载完成，准备初始化...');
+setTimeout(init, 100);
+});
+
+// 全局错误处理
+window.onerror = function(msg, url, line) {
+console.error('====== 全局错误 ======');
+console.error('错误:', msg);
+console.error('文件:', url);
+console.error('行号:', line);
+console.error('========================');
+alert('脚本错误：' + msg);
+return false;
+};
+
+// 显示提示
+function showToast(msg, type = 'success') {
+const toast = document.createElement('div');
+toast.className = `toast ${type}`;
+toast.textContent = msg;
+document.body.appendChild(toast);
+setTimeout(() => {
+toast.style.animation = 'toastFade .3s ease reverse';
+setTimeout(() => toast.remove(), 300);
+}, 2000);
+}
+
+// 开始体力恢复
+function startEnergyRecovery() {
+if (energyTimer) clearInterval(energyTimer);
+energyTimer = setInterval(() => {
+if (game.energy < game.maxEnergy) {
+game.energy++;
+saveGame();
+updateUI();
+}
+}, 5000); // 每 5 秒恢复 1 点
+}
+
+// 开始挂机收益
+let idleTimer = null;
+function startIdleRewards() {
+if (idleTimer) clearInterval(idleTimer);
+idleTimer = setInterval(() => {
+const rates = calculateIdleRate();
+game.idleRewards.gold += rates.gold;
+game.idleRewards.shard += rates.shard;
+updateIdleDisplay();
+}, 30000); // 每 30 秒获得一次收益
+}
+
+
+
+// 更新挂机收益显示
+function updateIdleDisplay() {
+document.getElementById('idle-stage-1').textContent = game.stages[1] - 1;
+document.getElementById('idle-stage-2').textContent = game.stages[2] - 1;
+document.getElementById('idle-stage-3').textContent = game.stages[3] - 1;
+const rates = calculateIdleRate();
+document.getElementById('idle-gold-rate').textContent = rates.gold;
+document.getElementById('idle-shard-rate').textContent = rates.shard;
+document.getElementById('idle-gold-pending').textContent = game.idleRewards.gold.toLocaleString();
+document.getElementById('idle-shard-pending').textContent = game.idleRewards.shard.toLocaleString();
+document.getElementById('btn-claim-idle').disabled = game.idleRewards.gold <= 0 && game.idleRewards.shard <= 0;
+}
+
+// 计算挂机收益速率 (每 30 秒)
+function calculateIdleRate() {
+const stages = game.stages;
+const gold = (stages[1] - 1) * 1 + (stages[2] - 1) * 3 + (stages[3] - 1) * 5;
+const shard = (stages[1] - 1) * 1 + (stages[2] - 1) * 2 + (stages[3] - 1) * 3;
+return {gold, shard};
+}
+
+// 领取挂机收益
+function claimIdleRewards() {
+if (game.idleRewards.gold <= 0 && game.idleRewards.shard <= 0) return;
+const gold = game.idleRewards.gold;
+const shard = game.idleRewards.shard;
+game.gold += gold;
+game.shard += shard;
+game.idleRewards = {gold: 0, shard: 0, lastClaim: Date.now()};
+saveGame();
+updateUI();
+updateIdleDisplay();
+showToast(`🎁 领取成功！💰${gold} 💎${shard}`, 'success');
+}
+
+// 检查每日重置
+function checkDailyReset() {
+const today = new Date().toDateString();
+if (game.lastCheckDate !== today) {
+game.dailyChecked = false;
+game.energy = game.maxEnergy;
+}
+}
+
+// 选择难度
+function selectDifficulty(diff) {
+console.log('选择难度:', diff);
+document.querySelectorAll('.stage-btn').forEach(btn => btn.classList.remove('ac'));
+document.querySelector(`.stage-btn[data-difficulty="${diff}"]`).classList.add('ac');
+battleState.currentDifficulty = diff;
+const btn = document.getElementById('btn-start-battle');
+if (btn) {
+btn.disabled = false;
+console.log('开始战斗按钮已启用');
+} else {
+console.error('开始战斗按钮不存在！');
+}
+}
+
+// 显示战斗面板
+// 切换自动战斗模式
+function toggleAutoBattleMode() {
+battleState.autoBattle = document.getElementById('chk-auto-battle').checked;
+if (battleState.autoBattle) {
+alert('🤖 自动战斗已开启\n\n获胜后将自动进入下一关\n失败时自动停止');
+}
+}
+
+// 每日签到
+function dailyCheck() {
+if (game.dailyChecked) {showToast('今日已签到！', 'error');return;}
+game.dailyChecked = true;
+game.lastCheckDate = new Date().toDateString();
+game.shark += 288;
+checkVIP();
+saveGame();
+updateUI();
+renderVIP();
+showToast('签到成功！获得 288 鲨币 🦈', 'success');
+}
+
+// 购买体力
+function buyEnergy() {
+if (game.energy >= game.maxEnergy) {
+showToast('⚡ 体力已满！', 'error');
+return;
+}
+if (game.shark < 100) {
+showToast('🦈 鲨币不足！', 'error');
+return;
+}
+game.shark -= 100;
+game.energy = Math.min(game.energy + 50, game.maxEnergy);
+saveGame();
+updateUI();
+showToast('✅ 购买成功！+50 体力', 'success');
+console.log('购买体力后:', game.energy, '/', game.maxEnergy);
+}
+
+// 切换自动购买体力
+function toggleAutoEnergy() {
+game.autoBuyEnergy = document.getElementById('chk-auto-energy').checked;
+saveGame();
+showToast(game.autoBuyEnergy ? '✅ 自动购买已开启' : '⏸️ 自动购买已关闭', 'success');
+}
+
+// 检查体力并自动购买
+function checkAndBuyEnergy() {
+console.log('检查自动购买：autoBuyEnergy=', game.autoBuyEnergy, 'energy=', game.energy);
+if (game.autoBuyEnergy && game.energy < 50) {
+if (game.shark >= 100) {
+game.shark -= 100;
+game.energy = Math.min(game.energy + 50, game.maxEnergy);
+saveGame();
+updateUI();
+showToast('🛒 自动购买体力！+50⚡', 'success');
+console.log('自动购买后：energy=', game.energy, 'shark=', game.shark);
+return true;
+} else {
+game.autoBuyEnergy = false;
+showToast('🦈 鲨币不足，自动购买已停止', 'error');
+const chk = document.getElementById('chk-auto-energy');
+if(chk) chk.checked = false;
+saveGame();
+console.log('鲨币不足，关闭自动购买');
+}
+}
+return false;
+}
+
+// 更新 UI
+function updateUI() {
+const goldEl = document.getElementById('gold');
+const shardEl = document.getElementById('shard');
+const sharkEl = document.getElementById('shark');
+const energyEl = document.getElementById('energy');
+const vipEl = document.getElementById('vip');
+const btnDailyEl = document.getElementById('btn-daily');
+const streetProgressEl = document.getElementById('street-progress');
+const nationalProgressEl = document.getElementById('national-progress');
+const worldProgressEl = document.getElementById('world-progress');
+const stageEl = document.getElementById('stage');
+const homeFighterCountEl = document.getElementById('home-fighter-count');
+const homeAvgPowerEl = document.getElementById('home-avg-power');
+const homeBestFighterEl = document.getElementById('home-best-fighter');
+
+if (goldEl) goldEl.textContent = game.gold.toLocaleString();
+if (shardEl) shardEl.textContent = game.shard.toLocaleString();
+if (sharkEl) sharkEl.textContent = game.shark.toLocaleString();
+if (energyEl) energyEl.textContent = `${game.energy}/${game.maxEnergy}`;
+if (vipEl) vipEl.textContent = game.vipBought;
+if (btnDailyEl) {
+btnDailyEl.disabled = game.dailyChecked;
+btnDailyEl.textContent = game.dailyChecked ? '已领取' : '领取 288🦈';
+}
+if (streetProgressEl) streetProgressEl.textContent = game.tournaments.street;
+if (nationalProgressEl) nationalProgressEl.textContent = game.tournaments.national;
+if (worldProgressEl) worldProgressEl.textContent = game.tournaments.world;
+if (stageEl) stageEl.textContent = Math.max(...Object.values(game.stages));
+
+updateIdleDisplay();
+updatePrivilegeDisplay();
+
+const count = game.fighters.length;
+const totalPower = game.fighters.reduce((sum, f) => {
+const stats = calcStats(f);
+return sum + stats.atk + stats.hp;
+}, 0);
+const avgPower = count > 0 ? Math.floor(totalPower / count) : 0;
+const bestFighter = game.fighters.length > 0 ? 
+game.fighters.reduce((best, f) => {
+const stats = calcStats(f);
+const power = stats.atk + stats.hp;
+const bestStats = calcStats(best);
+const bestPower = bestStats.atk + bestStats.hp;
+return power > bestPower ? f : best;
+}) : null;
+
+if (homeFighterCountEl) homeFighterCountEl.textContent = count;
+if (homeAvgPowerEl) homeAvgPowerEl.textContent = avgPower;
+if (homeBestFighterEl) homeBestFighterEl.textContent = bestFighter ? `${bestFighter.name}(${bestFighter.stars}星)` : '-';
+}
+
+// 更新关卡显示
+function updateStageDisplay() {
+for (let i = 1; i <= 3; i++) {
+document.getElementById(`stage-${i}`).textContent = game.stages[i];
+const baseGold = [1000, 3000, 5000][i-1];
+const baseShard = [100, 300, 500][i-1];
+const gold = baseGold + (game.stages[i] - 1) * (i === 3 ? 500 : i * 100);
+const shard = baseShard + (game.stages[i] - 1) * (i === 3 ? 50 : i * 10);
+document.getElementById(`reward-gold-${i}`).textContent = gold.toLocaleString();
+document.getElementById(`reward-shard-${i}`).textContent = shard.toLocaleString();
+if (i === 3) {
+const shark = 5 + (game.stages[i] - 1) * 5;
+document.getElementById(`reward-shark-${i}`).textContent = shark;
+}
+}
+document.getElementById('stage').textContent = Math.max(...Object.values(game.stages));
+}
+
+// 渲染 VIP 列表
+function renderVIP() {
+const container = document.getElementById('vip-list');
+if (!container) return;
+container.innerHTML = vipConfig.map(vip => {
+const isOwned = game.vipBought >= vip.level;
+const canAfford = game.shark >= vip.price;
+const canShow = game.vipBought >= vip.level - 1 || vip.level === 1;
+if (!canShow && !isOwned) return '';
+return `
+<div class="vip-card" style="border-color:${isOwned ? '#2ecc71' : canAfford ? '#ffd700' : '#444'};opacity:${isOwned ? 1 : 0.7}">
+<div class="vip-level">👑 VIP${vip.level} ${game.vipBought >= vip.level ? '<span style="color:#2ecc71;font-size:12px">(已拥有)</span>' : ''}</div>
+<div class="vip-req">价格：${vip.price.toLocaleString()} 🦈 ${isOwned ? '✅' : canAfford ? '✅可购买' : `❌ (${game.shark.toLocaleString()}/${vip.price.toLocaleString()})`}</div>
+<div class="vip-benefit">特权：升星消耗 -${vip.benefit}% ${isOwned ? '(永久)' : ''}</div>
+${!isOwned ? `<button class="btn bshark bsm bblk" style="margin-top:8px" onclick="buyVIP(${vip.level})" ${!canAfford ? 'disabled' : ''}>💳 购买 VIP${vip.level}</button>` : ''}
+</div>
+`;
+}).join('');
+}
+
+// 渲染魂匣
+function renderSoul() {
+const nameEl = document.getElementById('soul-fighter-name');
+if (nameEl && game.soulFighter) {
+nameEl.textContent = `${game.soulFighter.icon} ${game.soulFighter.name}`;
+}
+}
+
+// 渲染格斗家列表
+function renderFighters(filterQuality = 'all') {
+const list = document.getElementById('fighters-list');
+if (!list) return;
+let filtered = game.fighters;
+if (filterQuality !== 'all') {
+filtered = game.fighters.filter(f => f.quality === filterQuality);
+}
+
+if (filtered.length === 0) {
+list.innerHTML = '<div style="text-align:center;color:#666;padding:40px">还没有格斗家，快去召唤吧！</div>';
+return;
+}
+
+filtered.sort((a, b) => {
+if (b.quality !== a.quality) return b.quality - a.quality;
+return b.stars - a.stars;
+});
+
+list.innerHTML = filtered.map(f => {
+const stats = calcStats(f);
+const maxStars = getMaxStars(f.quality);
+const starPercent = (f.stars / maxStars) * 100;
+const power = stats.atk + stats.hp;
+const isMaxStar = f.stars >= maxStars;
+const starCost = getStarCost(f.stars);
+
+return `
+<div class="fc" onclick="showFighterDetail('${f.id}')">
+<div class="f-icon">${f.icon}</div>
+<div class="f-info">
+<div class="f-name">
+${f.name}
+<span class="quality-badge rb${f.quality}">${f.quality}</span>
+${isMaxStar ? '<span style="color:#ffd700;margin-left:5px">★MAX</span>' : ''}
+</div>
+<div class="f-stats">
+⭐ ${f.stars}/${maxStars} | 💪${stats.atk} | ❤️${stats.hp} | ⚡${power}
+</div>
+<div class="pb"><div class="pbf rb${f.quality}" style="width:${starPercent}%"></div></div>
+</div>
+<button class="btn bpu bsm" onclick="event.stopPropagation();startAutoStar('${f.id}')" ${game.shard < starCost ? 'disabled' : ''}>⭐自动升星</button>
+</div>
+`;
+}).join('');
+}
+
+// 显示格斗家详情
+function showFighterDetail(id) {
+const fighter = game.fighters.find(f => f.id === id);
+if (!fighter) return;
+const stats = calcStats(fighter);
+const maxStars = getMaxStars(fighter.quality);
+const starCost = getStarCost(fighter.stars);
+const isMaxStar = fighter.stars >= maxStars;
+const reduction = game.vip;
+const modal = document.createElement('div');
+modal.className = 'modal-o show';
+modal.innerHTML = `
+<div class="modal">
+<h3>${fighter.icon} ${fighter.name}</h3>
+<div style="text-align:left;margin:15px 0;font-size:13px;line-height:1.8">
+<div>📊 资质：<span class="rb${fighter.quality}" style="padding:2px 8px;border-radius:4px">${fighter.quality}</span></div>
+<div>⭐ 星级：${fighter.stars}/${maxStars}</div>
+<div>💪 攻击：${stats.atk}</div>
+<div>❤️ 生命：${stats.hp}</div>
+<div>⚡ 战力：${stats.atk + stats.hp}</div>
+<div>👑 VIP 减免：-${reduction}%</div>
+<div style="margin-top:10px">🎯 技能：</div>
+<div style="color:#888;font-size:12px">${fighter.skills.join(' | ')}</div>
+</div>
+${!isMaxStar ? `
+<div style="margin:15px 0;padding:10px;background:#1a1a2e;border-radius:6px">
+<div style="font-size:12px;color:#888;margin-bottom:5px">升星需要：${starCost} 万能碎片 (已减免${reduction}%)</div>
+<div style="font-size:12px;color:${game.shard >= starCost ? '#2ecc71' : '#ff4444'}">
+当前拥有：${game.shard} 碎片 ${game.shard >= starCost ? '✓' : '✗'}
+</div>
+</div>
+<button class="btn bpu bblk" onclick="upgradeStar('${fighter.id}')" ${game.shard < starCost ? 'disabled' : ''}>升星 (+1)</button>
+` : '<div style="color:#ffd700;font-weight:700">已达到满星！</div>'}
+<button class="btn bo bblk" style="margin-top:10px" onclick="this.closest('.modal-o').remove()">关闭</button>
+</div>
+`;
+document.body.appendChild(modal);
+modal.onclick = (e) => {if (e.target === modal) modal.remove();};
+}
+
+// 升星
+function upgradeStar(id) {
+const fighter = game.fighters.find(f => f.id === id);
+if (!fighter) return;
+const maxStars = getMaxStars(fighter.quality);
+if (fighter.stars >= maxStars) {alert('已达到满星！');return;}
+const cost = getStarCost(fighter.stars);
+if (game.shard < cost) {alert(`万能碎片不足！需要${cost}，当前${game.shard}`);return;}
+game.shard -= cost;
+fighter.stars++;
+saveGame();
+updateUI();
+renderFighters();
+renderVIP();
+showFighterDetail(id);
+}
+
+// 自动升星（支持多个同时）
+let autoStarTasks = {};
+
+function startAutoStar(id) {
+const fighter = game.fighters.find(f => f.id === id);
+if (!fighter) return;
+const maxStars = getMaxStars(fighter.quality);
+if (fighter.stars >= maxStars) {showToast('已达到满星！', 'error');return;}
+if (autoStarTasks[id]) {showToast('已在自动升星中！', 'error');return;}
+
+let count = 0;
+autoStarTasks[id] = setInterval(() => {
+const cost = getStarCost(fighter.stars);
+if (game.shard < cost || fighter.stars >= maxStars) {
+clearInterval(autoStarTasks[id]);
+delete autoStarTasks[id];
+if (count > 0) {
+showToast(`${fighter.name} 升星完成！+${count}星`, 'success');
+}
+return;
+}
+game.shard -= cost;
+fighter.stars++;
+count++;
+saveGame();
+updateUI();
+renderFighters();
+}, 100);
+
+showToast(`${fighter.name} 开始自动升星`, 'success');
+}
+
+// 渲染战队
+function renderTeam() {
+const container = document.getElementById('team-slots');
+if (!container) return;
+const slots = [];
+for (let i = 0; i < 6; i++) {
+const fighterId = game.team[i];
+const fighter = fighterId ? game.fighters.find(f => f.id === fighterId) : null;
+if (fighter) {
+const stats = calcStats(fighter);
+slots.push(`
+<div class="team-slot">
+<div class="slot-num">${i + 1}</div>
+<div class="fighter-mini">
+<div class="icon">${fighter.icon}</div>
+<div class="info">
+<div class="name">${fighter.name} <span class="rb${fighter.quality}" style="padding:1px 4px;border-radius:3px;font-size:9px">${fighter.quality}</span></div>
+<div class="stats">⭐${fighter.stars} | 💪${stats.atk} | ❤️${stats.hp}</div>
+</div>
+</div>
+<button class="btn bo bsm" onclick="removeFromTeam(${i})">卸下</button>
+</div>
+`);
+} else {
+slots.push(`
+<div class="team-slot">
+<div class="slot-num">${i + 1}</div>
+<div class="fighter-mini" style="color:#666">空位</div>
+<button class="btn bp bsm" onclick="selectForTeam(${i})">选择</button>
+</div>
+`);
+}
+}
+container.innerHTML = slots.join('');
+const totalPower = game.team.reduce((sum, id) => {
+const fighter = game.fighters.find(f => f.id === id);
+if (!fighter) return sum;
+const stats = calcStats(fighter);
+return sum + stats.atk + stats.hp;
+}, 0);
+document.getElementById('team-total-power').textContent = totalPower;
+}
+
+// 选择格斗家入队
+function selectForTeam(slotIndex) {
+if (game.fighters.length === 0) {alert('还没有格斗家！');return;}
+const modal = document.createElement('div');
+modal.className = 'modal-o show';
+modal.innerHTML = `
+<div class="modal">
+<h3>选择格斗家</h3>
+<div style="max-height:300px;overflow-y:auto;margin:15px 0">
+${game.fighters.filter(f => !game.team.includes(f.id)).map(f => {
+const stats = calcStats(f);
+return `<div class="fc" onclick="addToTeam(${slotIndex}, '${f.id}')">
+<div class="f-icon">${f.icon}</div>
+<div class="f-info">
+<div class="f-name">${f.name} <span class="rb${f.quality}" style="padding:1px 5px;border-radius:3px">${f.quality}</span></div>
+<div class="f-stats">⭐${f.stars} | 💪${stats.atk} | ❤️${stats.hp}</div>
+</div>
+</div>`;
+}).join('') || '<div style="text-align:center;color:#666;padding:20px">所有格斗家已上阵</div>'}
+</div>
+<button class="btn bo bblk" onclick="this.closest('.modal-o').remove()">关闭</button>
+</div>
+`;
+document.body.appendChild(modal);
+modal.onclick = (e) => {if (e.target === modal) modal.remove();};
+}
+
+// 添加到战队
+function addToTeam(slotIndex, fighterId) {
+game.team[slotIndex] = fighterId;
+saveGame();
+renderTeam();
+updateUI();
+document.querySelectorAll('.modal-o').forEach(m => m.remove());
+}
+
+// 从战队移除
+function removeFromTeam(slotIndex) {
+game.team[slotIndex] = null;
+saveGame();
+renderTeam();
+updateUI();
+}
+
+// 计算团队总资质和总星级
+function calcTeamScore(team) {
+let totalQuality = 0, totalStars = 0;
+team.forEach(f => {
+if (f) {
+totalQuality += f.quality;
+totalStars += f.stars;
+}
+});
+return {totalQuality, totalStars};
+}
+
+// 开始战斗
+function startBattle() {
+try {
+console.log('=== 开始战斗函数被调用 ===');
+const diff = battleState.currentDifficulty;
+const energyCost = [5, 10, 20][diff - 1];
+console.log('难度:', diff, '体力:', game.energy, '消耗:', energyCost);
+if (game.energy < energyCost) {
+console.log('体力不足，检查自动购买...');
+if (game.autoBuyEnergy && game.shark >= 100) {
+checkAndBuyEnergy();
+} else {
+game.autoBattle = false;
+showToast('⚡ 体力不足！自动战斗已停止', 'error');
+console.log('体力不足，返回');
+return;
+}
+if (game.energy < energyCost) {
+game.autoBattle = false;
+showToast('⚡ 体力不足！自动战斗已停止', 'error');
+console.log('购买后体力仍不足，返回');
+return;
+}
+}
+if (game.team.length === 0 || game.team.every(id => !id)) {
+showToast('请先组建战队！', 'error');
+console.log('没有组建战队，返回');
+return;
+}
+
+console.log('扣除体力...');
+game.energy -= energyCost;
+
+// 准备玩家队伍
+battleState.playerTeam = game.team.map(id => {
+const fighter = game.fighters.find(f => f.id === id);
+if (!fighter) return null;
+const stats = calcStats(fighter);
+return {...fighter, currentHp: stats.hp, maxHp: stats.hp, atk: stats.atk};
+}).filter(f => f !== null);
+
+// 补充到 6 人
+while (battleState.playerTeam.length < 6) {
+battleState.playerTeam.push(null);
+}
+
+// 生成敌人队伍
+battleState.enemyTeam = [];
+const stage = game.stages[diff];
+
+// 基础属性（根据难度）
+let baseHp = 1000;
+let baseAtk = 100;
+
+if (diff === 1) {
+// 普通难度
+baseHp = 500 + (stage * 50);
+baseAtk = 50 + (stage * 5);
+} else if (diff === 2) {
+// 精英难度
+baseHp = 2000 + (stage * 100);
+baseAtk = 150 + (stage * 10);
+} else if (diff === 3) {
+// 宗师/炼狱难度
+if (stage <= 100) {
+baseHp = 5000 + (stage * 200);
+baseAtk = 300 + (stage * 20);
+} else if (stage <= 500) {
+baseHp = 25000 * Math.pow(1.03, stage - 100);
+baseAtk = 2300 * Math.pow(1.03, stage - 100);
+} else {
+// 超级炼狱
+baseHp = 25000 * Math.pow(1.05, stage - 100);
+baseAtk = 2300 * Math.pow(1.05, stage - 100);
+}
+}
+
+// 创建 6 个敌人
+for (let i = 0; i < 6; i++) {
+const enemyTemplates = [
+{name: '魔兵', icon: '👹'},
+{name: '魔将', icon: '👺'},
+{name: '魔兽', icon: '🐲'},
+{name: '魔神', icon: '👿'},
+{name: '骷髅', icon: '💀'},
+{name: '恶魔', icon: '😈'}
+];
+const template = enemyTemplates[i % enemyTemplates.length];
+
+battleState.enemyTeam.push({
+name: template.name,
+icon: template.icon,
+quality: 1,
+skills: ['攻击'],
+currentHp: Math.floor(baseHp * (0.8 + Math.random() * 0.4)),
+maxHp: Math.floor(baseHp * (0.8 + Math.random() * 0.4)),
+atk: Math.floor(baseAtk * (0.8 + Math.random() * 0.4)),
+baseAtk: 0,
+baseHp: 0,
+maxStars: 1
+});
+}
+
+// 决定先手
+const playerScore = calcTeamScore(battleState.playerTeam);
+const enemyScore = calcTeamScore(battleState.enemyTeam);
+battleState.playerTurn = playerScore.totalQuality > enemyScore.totalQuality || 
+(playerScore.totalQuality === enemyScore.totalQuality && playerScore.totalStars >= enemyScore.totalStars);
+
+battleState.turn = 1;
+battleState.actionIndex = 0;
+battleState.battleLog = [];
+battleState.isAnimating = false;
+battleState.difficulty = diff;
+
+// 显示全屏战斗界面
+openBattle();
+document.getElementById('battle-stage-display').textContent = game.stages[diff];
+document.getElementById('battle-round-display').textContent = battleState.turn;
+document.getElementById('fullscreen-battle-log').innerHTML = '';
+
+addBattleLog(`⚔️ 战斗开始！第${battleState.turn}回合`, 'win');
+addBattleLog(battleState.playerTurn ? '👤 玩家方先手！' : '👹 敌方先手！', battleState.playerTurn ? 'win' : 'lose');
+
+// 渲染战斗界面
+renderFullscreenBattle();
+
+// 开始回合
+setTimeout(executeTurn, 1000);
+
+console.log('=== 开始战斗函数执行完毕 ===');
+} catch(e) {
+console.error('=== 开始战斗函数错误:', e);
+showToast('战斗启动失败！请查看控制台', 'error');
+}
+}
+
+// 关闭战斗
+function closeBattle() {
+document.getElementById('fullscreen-battle').style.display = 'none';
+document.body.style.overflow = '';
+battleState.paused = false;
+}
+
+// 打开战斗（防止背景滚动）
+function openBattle() {
+document.getElementById('fullscreen-battle').style.display = 'block';
+document.body.style.overflow = 'hidden';
+battleState.paused = false;
+document.getElementById('btn-pause-battle').textContent = '⏸️ 暂停';
+}
+
+// 暂停/恢复战斗
+function togglePauseBattle() {
+battleState.paused = !battleState.paused;
+const btn = document.getElementById('btn-pause-battle');
+if (battleState.paused) {
+btn.textContent = '▶️ 继续';
+addBattleLog(`⏸️ 战斗已暂停`, 'lose');
+} else {
+btn.textContent = '⏸️ 暂停';
+addBattleLog(`▶️ 战斗继续`, 'win');
+executeTurn();
+}
+}
+
+// 渲染全屏战斗界面
+function renderFullscreenBattle() {
+// 渲染玩家队伍
+for (let i = 0; i < 6; i++) {
+const fighter = battleState.playerTeam[i];
+const card = document.getElementById(`battle-player-${i}`);
+if (card) {
+if (fighter && fighter.maxHp > 0) {
+const currentHp = Math.max(1, Math.floor(fighter.currentHp));
+const maxHp = Math.max(1, Math.floor(fighter.maxHp));
+const hpPercent = (currentHp / maxHp) * 100;
+card.className = `battle-fighter-card${currentHp <= 0 ? ' dead' : ''}`;
+card.innerHTML = `
+<div class="icon">${fighter.icon}</div>
+<div class="name">${fighter.name}</div>
+<div class="hp-bar"><div class="hp-fill" style="width:${Math.max(0, Math.min(100, hpPercent))}%"></div></div>
+<div class="hp-text">${currentHp}/${maxHp}</div>
+`;
+} else {
+card.className = 'battle-fighter-card dead';
+card.innerHTML = '<div class="icon">❓</div><div class="name">空位</div>';
+}
+}
+}
+
+// 渲染敌人队伍
+for (let i = 0; i < 6; i++) {
+const fighter = battleState.enemyTeam[i];
+const card = document.getElementById(`battle-enemy-${i}`);
+if (card) {
+if (fighter && fighter.maxHp > 0) {
+const currentHp = Math.max(1, Math.floor(fighter.currentHp));
+const maxHp = Math.max(1, Math.floor(fighter.maxHp));
+const hpPercent = (currentHp / maxHp) * 100;
+card.className = `battle-fighter-card${currentHp <= 0 ? ' dead' : ''}`;
+card.innerHTML = `
+<div class="icon">${fighter.icon}</div>
+<div class="name">${fighter.name}</div>
+<div class="hp-bar"><div class="hp-fill" style="width:${Math.max(0, Math.min(100, hpPercent))}%"></div></div>
+<div class="hp-text">${currentHp}/${maxHp}</div>
+`;
+} else {
+card.className = 'battle-fighter-card dead';
+card.innerHTML = '<div class="icon">❓</div><div class="name">空位</div>';
+}
+}
+}
+}
+
+// 添加战斗日志
+function addBattleLog(text, type = '') {
+const log = document.getElementById('fullscreen-battle-log');
+const entry = document.createElement('div');
+entry.className = type;
+entry.textContent = text;
+entry.style.cssText = `margin:5px 0;padding:5px;background:#1a1a2e;border-radius:4px;border-left:3px solid ${type === 'win' ? '#ffd700' : type === 'lose' ? '#e74c3c' : '#ff6b6b'}`;
+log.appendChild(entry);
+log.scrollTop = log.scrollHeight;
+}
+
+// 执行回合
+function executeTurn() {
+if (battleState.isAnimating) return;
+if (battleState.paused) return;
+battleState.isAnimating = true;
+
+const speedDelay = 800 / battleState.battleSpeed;
+
+// 检查是否有全体攻击
+const currentTeam = battleState.playerTurn ? battleState.playerTeam : battleState.enemyTeam;
+const otherTeam = battleState.playerTurn ? battleState.enemyTeam : battleState.playerTeam;
+const prefix = battleState.playerTurn ? 'player' : 'enemy';
+
+// 找到下一个存活的格斗家
+let found = false;
+for (let i = battleState.actionIndex; i < 6; i++) {
+const fighter = currentTeam[i];
+if (fighter && fighter.currentHp > 0) {
+found = true;
+battleState.actionIndex = i;
+
+// 高亮当前行动者
+document.querySelectorAll('.battle-fighter-card').forEach(el => el.classList.remove('active'));
+const fighterEl = document.getElementById(`battle-${prefix}-${i}`);
+if (fighterEl) {
+fighterEl.classList.add('active');
+fighterEl.classList.add('attacking');
+setTimeout(() => fighterEl.classList.remove('attacking'), 500);
+}
+
+// 选择目标
+const aliveTargets = otherTeam.filter(f => f && f.currentHp > 0);
+if (aliveTargets.length === 0) {
+endBattle(battleState.playerTurn);
+return;
+}
+
+// 检查是否全体攻击（1 万星）
+const isAoE = hasAoESkill(fighter);
+
+if (isAoE) {
+// 全体攻击
+const damage = Math.floor(fighter.atk * (0.8 + Math.random() * 0.4));
+addBattleLog(`${fighter.icon} ${fighter.name} 使用【全体攻击】对敌方全体造成${damage}点伤害！`, 'win');
+
+// 对所有敌人造成伤害
+aliveTargets.forEach(target => {
+const targetIndex = otherTeam.indexOf(target);
+const targetPrefix = battleState.playerTurn ? 'enemy' : 'player';
+target.currentHp -= damage;
+showDamageNumber(targetIndex, targetPrefix, damage);
+});
+
+// 更新显示
+renderFullscreenBattle();
+} else {
+// 单体攻击
+const target = aliveTargets[Math.floor(Math.random() * aliveTargets.length)];
+const targetIndex = otherTeam.indexOf(target);
+const targetPrefix = battleState.playerTurn ? 'enemy' : 'player';
+
+// 计算伤害
+const damage = Math.floor(fighter.atk * (0.8 + Math.random() * 0.4));
+
+// 显示技能特效
+showSkillEffect(fighter, targetIndex, targetPrefix, damage);
+
+// 更新血量
+target.currentHp -= damage;
+
+// 显示伤害数字
+showDamageNumber(targetIndex, targetPrefix, damage);
+
+addBattleLog(`${fighter.icon} ${fighter.name} 攻击 ${target.icon} ${target.name}，造成${damage}点伤害！`, 'attack');
+}
+
+// 检查死亡
+otherTeam.forEach((t, i) => {
+if (t && t.currentHp <= 0) {
+const prefix2 = battleState.playerTurn ? 'enemy' : 'player';
+addBattleLog(`💀 ${t.name} 被击败了！`, 'lose');
+}
+});
+
+battleState.actionIndex++;
+
+// 检查是否全部行动完毕
+const allActed = currentTeam.every((f, i) => i < battleState.actionIndex || !f || f.currentHp <= 0);
+if (allActed) {
+battleState.playerTurn = !battleState.playerTurn;
+battleState.actionIndex = 0;
+const otherAlive = otherTeam.filter(f => f && f.currentHp > 0);
+if (otherAlive.length === 0) {
+endBattle(battleState.playerTurn);
+return;
+}
+document.getElementById('battle-round-display').textContent = ++battleState.turn;
+setTimeout(() => {
+battleState.isAnimating = false;
+executeTurn();
+}, speedDelay);
+} else {
+setTimeout(() => {
+battleState.isAnimating = false;
+executeTurn();
+}, speedDelay);
+}
+return;
+}
+}
+
+// 如果没有找到存活的格斗家，切换回合
+battleState.playerTurn = !battleState.playerTurn;
+battleState.actionIndex = 0;
+const otherAlive = battleState.playerTurn ? battleState.enemyTeam : battleState.playerTeam;
+if (otherAlive.filter(f => f && f.currentHp > 0).length === 0) {
+endBattle(!battleState.playerTurn);
+return;
+}
+document.getElementById('battle-round-display').textContent = ++battleState.turn;
+setTimeout(() => {
+battleState.isAnimating = false;
+executeTurn();
+}, speedDelay);
+}
+
+// 显示技能特效
+function showSkillEffect(fighter, targetIndex, targetPrefix, damage) {
+const effectsDiv = document.getElementById('battle-effects');
+const skill = fighter.skills[Math.floor(Math.random() * fighter.skills.length)];
+
+// 技能名称特效
+const skillText = document.createElement('div');
+skillText.className = 'skill-effect';
+skillText.textContent = skill;
+skillText.style.cssText = 'left:50%;top:40%;transform:translate(-50%,-50%);color:#ffd700;font-size:40px;font-weight:700;text-shadow:0 0 20px #ffd700';
+effectsDiv.appendChild(skillText);
+setTimeout(() => skillText.remove(), 800);
+
+// 目标受击特效
+const targetEl = document.getElementById(`battle-${targetPrefix}-${targetIndex}`);
+if (targetEl) {
+targetEl.classList.add('hit');
+setTimeout(() => targetEl.classList.remove('hit'), 400);
+}
+}
+
+// 显示伤害数字
+function showDamageNumber(targetIndex, targetPrefix, damage) {
+const targetEl = document.getElementById(`battle-${targetPrefix}-${targetIndex}`);
+if (!targetEl) return;
+
+const damageNum = document.createElement('div');
+damageNum.className = 'damage-number';
+damageNum.textContent = `-${damage}`;
+damageNum.style.cssText = 'left:50%;top:20%;transform:translateX(-50%)';
+targetEl.appendChild(damageNum);
+setTimeout(() => damageNum.remove(), 1000);
+}
+
+// 结束战斗
+function endBattle(playerWin) {
+const diff = battleState.currentDifficulty;
+const stage = game.stages[diff];
+const baseGold = [100, 300, 500][diff - 1]; // 降低 10 倍
+const baseShard = [10, 30, 50][diff - 1]; // 降低 10 倍
+const baseShark = [0, 0, 0.5][diff - 1]; // 降低 10 倍
+
+const goldReward = Math.floor((baseGold + (stage - 1) * (diff === 3 ? 50 : diff * 10)) * game.dropRate);
+const shardReward = Math.floor((baseShard + (stage - 1) * (diff === 3 ? 5 : diff * 1)) * game.dropRate);
+const sharkReward = diff === 3 ? Math.floor((0.5 + (stage - 1) * 0.1) * game.dropRate) : 0;
+
+if (playerWin) {
+// 擂台奖励 +50%
+const bonusMultiplier = (diff === 1 || diff === 2 || diff === 3) ? 1.5 : 1.0;
+game.gold += Math.floor(goldReward * bonusMultiplier);
+game.shard += Math.floor(shardReward * bonusMultiplier);
+if (sharkReward > 0) game.shark += Math.floor(sharkReward * bonusMultiplier);
+game.stages[diff]++;
+if (game.stages[diff] > 2000) game.stages[diff] = 2000;
+let rewardText = `🏆 战斗胜利！获得 ${Math.floor(goldReward * bonusMultiplier)}金币 +${Math.floor(shardReward * bonusMultiplier)}碎片`;
+if (sharkReward > 0) rewardText += ` +${Math.floor(sharkReward * bonusMultiplier)}🦈`;
+addBattleLog(rewardText, 'win');
+addBattleLog(`📍 通关第${stage}关！`, 'win');
+} else {
+addBattleLog(`💀 战斗失败！当前关卡：第${stage}关`, 'lose');
+if (battleState.autoBattle) {
+addBattleLog(`🤖 自动战斗已停止`, 'lose');
+battleState.autoBattle = false;
+document.getElementById('chk-auto-battle').checked = false;
+}
+}
+
+saveGame();
+console.log('战斗结束 - 保存后状态 - 金币:', game.gold, '体力:', game.energy);
+
+// 自动战斗逻辑
+if (battleState.autoBattle && playerWin && game.stages[diff] <= 2000) {
+addBattleLog(`🤖 自动战斗：准备进入第${game.stages[diff]}关...`, 'win');
+setTimeout(() => {
+startBattle();
+}, 2000);
+return;
+}
+
+// 3 秒后关闭战斗界面并更新 UI
+setTimeout(() => {
+closeBattle();
+updateUI();
+updateStageDisplay();
+updateIdleDisplay();
+}, 3000);
+}
+
+// 赛事战斗
+function tournamentFight(type) {
+const limits = {street: 10, national: 5, world: 3};
+const rewards = {street: {gold: 200, shard: 50},national: {gold: 500, shard: 150},world: {gold: 1500, shard: 500}};
+if (game.tournaments[type] >= limits[type]) {alert('今日参赛次数已达上限！');return;}
+if (game.team.length === 0 || game.team.every(id => !id)) {alert('请先组建战队！');return;}
+const teamPower = game.team.reduce((sum, id) => {
+const fighter = game.fighters.find(f => f.id === id);
+if (!fighter) return sum;
+const stats = calcStats(fighter);
+return sum + stats.atk + stats.hp;
+}, 0);
+const enemyBase = {street: 1000, national: 3000, world: 8000}[type];
+const enemyPower = enemyBase * (1 + Math.random() * 0.5);
+const win = teamPower >= enemyPower;
+game.tournaments[type]++;
+if (win) {
+game.gold += rewards[type].gold * game.dropRate;
+game.shard += rewards[type].shard * game.dropRate;
+alert(`🏆 获胜！获得 ${rewards[type].gold * game.dropRate}金币 +${rewards[type].shard * game.dropRate}碎片`);
+} else {
+alert(`💀 战败！虽败犹荣，继续加油！`);
+}
+saveGame();
+updateUI();
+renderFighters();
+}
+
+// 召唤
+function summon(times) {
+const cost = times * 500;
+if (game.gold < cost) {alert('金币不足！');return;}
+game.gold -= cost;
+const results = [];
+for (let i = 0; i < times; i++) {
+const rand = Math.random() * 100;
+let quality;
+if (rand < 1) quality = 15;
+else if (rand < 4) quality = 14;
+else if (rand < 10) quality = 13;
+else if (rand < 20) quality = 12;
+else if (rand < 35) quality = 11;
+else if (rand < 55) quality = 10;
+else if (rand < 80) quality = 9;
+else quality = 8;
+const pool = fightersDB.filter(f => f.quality === quality);
+const baseFighter = pool[Math.floor(Math.random() * pool.length)];
+const existing = game.fighters.find(f => f.name === baseFighter.name);
+if (existing) {
+game.shard += 100;
+results.push({type: 'shard', name: baseFighter.name, icon: baseFighter.icon, quality: baseFighter.quality});
+} else {
+const newFighter = {id: generateId(),name: baseFighter.name,quality: baseFighter.quality,icon: baseFighter.icon,skills: [...baseFighter.skills],stars: 1,baseAtk: baseFighter.baseAtk,baseHp: baseFighter.baseHp,maxStars: baseFighter.maxStars};
+game.fighters.push(newFighter);
+results.push({type: 'fighter', ...newFighter});
+}
+}
+saveGame();
+updateUI();
+renderFighters();
+renderTeam();
+showSummonResultInline(results);
+}
+
+// 显示召唤结果 (页面内)
+function showSummonResultInline(results) {
+const container = document.getElementById('summon-result-container');
+if (!container) return;
+const newFighters = results.filter(r => r.type === 'fighter');
+const shards = results.filter(r => r.type === 'shard');
+const top10 = newFighters.sort((a, b) => b.quality - a.quality).slice(0, 10);
+const extraCount = newFighters.length - 10;
+let html = '<div class="summon-result">';
+html += '<h4>🎉 召唤结果</h4>';
+html += '<div class="summon-grid">';
+top10.forEach(r => {
+html += `<div class="summon-card" style="border-color:var(--rb${r.quality})">
+<div class="icon">${r.icon}</div>
+<div class="name">${r.name}</div>
+<div class="quality"><span class="rb${r.quality}">${r.quality}资质</span></div>
+</div>`;
+});
+html += '</div>';
+if (extraCount > 0) {
+html += `<div class="summon-extra">还有 ${extraCount} 名格斗家未显示</div>`;
+}
+if (shards.length > 0) {
+html += `<div class="summon-extra" style="color:#00bfff">重复格斗家转化：${shards.length} × 100 碎片 = ${shards.length * 100} 碎片</div>`;
+}
+html += '</div>';
+container.innerHTML = html;
+}
+
+// 魂匣召唤
+function summonSoul(times) {
+const cost = times * 100;
+if (game.shark < cost) {alert('鲨币不足！');return;}
+if (!game.soulFighter) {alert('今日魂匣格斗家未刷新！');return;}
+game.shark -= cost;
+
+const resultDiv = document.getElementById('soul-result');
+let results = [];
+
+for (let i = 0; i < times; i++) {
+const won = Math.random() < 1/188;
+if (won) {
+game.soulStreak = 0;
+const existing = game.fighters.find(f => f.name === game.soulFighter.name);
+if (existing) {
+game.shard += 10000;
+results.push(`🎉 获得 ${game.soulFighter.name} 碎片 x10000！`);
+} else {
+const newFighter = {id: generateId(),name: game.soulFighter.name,quality: game.soulFighter.quality,icon: game.soulFighter.icon,skills: [...game.soulFighter.skills],stars: 1,baseAtk: game.soulFighter.baseAtk,baseHp: game.soulFighter.baseHp,maxStars: game.soulFighter.maxStars};
+game.fighters.push(newFighter);
+results.push(`🎉🎉🎉 获得 16 资质格斗家 ${game.soulFighter.name}！`);
+}
+} else {
+game.soulStreak++;
+game.shard += 2000;
+results.push(`未中奖，获得 2000 碎片 (连续${game.soulStreak}次未中)`);
+}
+}
+
+resultDiv.innerHTML = results.map(r => `<div>${r}</div>`).join('');
+resultDiv.style.color = results.some(r => r.includes('16 资质')) ? '#ffd700' : '#888';
+
+saveGame();
+updateUI();
+renderFighters();
+}
+
+// 购买鲨币
+function buyShark() {
+alert('🦈 购买鲨币\n\n188 元 = 1,000,000 鲨币\n\n请联系微信：282265901');
+}
+
+// 购买特权礼包
+function buyPrivilegePack() {
+if (game.privilegePackBought) {
+alert('✅ 您已购买过特权礼包！\n\n每日可领取一次奖励，请明天再来领取。');
+return;
+}
+if (game.shark < 5000) {
+alert('🦈 鲨币不足！\n\n特权礼包需要 5000 鲨币\n当前拥有：' + game.shark.toLocaleString() + ' 鲨币');
+return;
+}
+if (confirm('确定购买特权礼包吗？\n\n消耗：5000🦈\n奖励：1,000,000💰 100,000💎 5000🦈\n\n之后每日可领取一次奖励！')) {
+game.shark -= 5000;
+game.gold += 1000000;
+game.shard += 100000;
+game.shark += 5000;
+game.privilegePackBought = true;
+game.privilegePackLastClaim = new Date().toDateString();
+saveGame();
+updateUI();
+updatePrivilegeDisplay();
+alert('🎉 购买成功！\n\n获得：\n1,000,000💰 金币\n100,000💎 碎片\n5000🦈 鲨币\n\n明天可领取每日奖励！');
+}
+}
+
+// 领取特权礼包每日奖励
+function claimPrivilegePack() {
+if (!game.privilegePackBought) {
+alert('❌ 您还未购买特权礼包！');
+return;
+}
+const today = new Date().toDateString();
+if (game.privilegePackLastClaim === today) {
+alert('✅ 今日奖励已领取！\n\n请明天再来领取。');
+return;
+}
+game.gold += 1000000;
+game.shard += 100000;
+game.shark += 5000;
+game.privilegePackLastClaim = today;
+saveGame();
+updateUI();
+updatePrivilegeDisplay();
+alert('🎁 领取成功！\n\n获得：\n1,000,000💰 金币\n100,000💎 碎片\n5000🦈 鲨币');
+}
+
+// 更新特权礼包显示
+function updatePrivilegeDisplay() {
+const boughtSection = document.getElementById('privilege-pack-section');
+const claimSection = document.getElementById('privilege-pack-claim');
+const claimBtn = document.getElementById('btn-claim-privilege');
+const claimStatus = document.getElementById('privilege-claim-status');
+
+if (!boughtSection || !claimSection) return;
+
+if (!game.privilegePackBought) {
+boughtSection.style.display = 'block';
+claimSection.style.display = 'none';
+} else {
+boughtSection.style.display = 'none';
+claimSection.style.display = 'block';
+const today = new Date().toDateString();
+if (game.privilegePackLastClaim === today) {
+claimBtn.disabled = true;
+claimStatus.textContent = '已领取';
+claimStatus.style.color = '#888';
+} else {
+claimBtn.disabled = false;
+claimStatus.textContent = '可领取';
+claimStatus.style.color = '#ffd700';
+}
+}
+}
+
+// 兑换 CDK
+function redeemCDK() {
+const cdk = document.getElementById('cdk-input').value.trim();
+const resultDiv = document.getElementById('cdk-result');
+
+if (!cdk) {
+  resultDiv.innerHTML = '<span style="color:#ff6b6b">❌ 请输入礼包码！</span>';
+  return;
+}
+
+if (game.cdkUsed.includes(cdk)) {
+  resultDiv.innerHTML = '<span style="color:#ff6b6b">❌ 该礼包码已使用过！</span>';
+  return;
+}
+
+// 礼包码奖励配置
+const giftCodes = {
+  'shayu666': {gold: 100000, shard: 10000, shark: 666, desc: '新手礼包'},
+  'shayu66888': {gold: 0, shard: 0, shark: 1000000, desc: '超级鲨币礼包'},
+  'shayu222399': {fighters: 'all16', desc: '16 资质全收集礼包'},
+  'shayu22112': {gold: 0, shard: 1000000000, shark: 0, desc: '10 亿碎片大礼包'}
+};
+
+// 检查礼包码是否存在
+if (!giftCodes[cdk]) {
+  resultDiv.innerHTML = '<span style="color:#ff6b6b">❌ 无效的礼包码！</span>';
+  return;
+}
+
+const reward = giftCodes[cdk];
+
+// 发放奖励
+if (reward.fighters === 'all16') {
+  // 添加所有 16 资质格斗家
+  const soul16List = soul16Fighters.filter(f => !game.fighters.find(existing => existing.name === f.name));
+  soul16List.forEach(f => {
+    const newFighter = {
+      id: generateId(),
+      name: f.name,
+      quality: f.quality,
+      icon: f.icon,
+      skills: [...f.skills],
+      stars: 1,
+      baseAtk: f.baseAtk,
+      baseHp: f.baseHp,
+      maxStars: f.maxStars
+    };
+    game.fighters.push(newFighter);
+  });
+  
+  game.cdkUsed.push(cdk);
+  saveGame();
+  updateUI();
+  renderFighters();
+  
+  resultDiv.innerHTML = `<span style="color:#2ecc71">✅ 兑换成功！获得 ${soul16List.length} 个 16 资质格斗家！</span>`;
+  
+  setTimeout(() => {
+    alert(`🎉 礼包兑换成功！\n\n获得 16 资质格斗家：\n${soul16List.map(f => f.name).join('\n')}`);
+  }, 100);
+} else {
+  game.gold += reward.gold;
+  game.shard += reward.shard;
+  game.shark += reward.shark;
+  game.cdkUsed.push(cdk);
+  
+  checkVIP();
+  saveGame();
+  updateUI();
+  
+  let rewardText = '';
+  if (reward.gold > 0) rewardText += `${reward.gold.toLocaleString()}💰 `;
+  if (reward.shard > 0) rewardText += `${reward.shard.toLocaleString()}💎 `;
+  if (reward.shark > 0) rewardText += `${reward.shark.toLocaleString()}🦈`;
+  
+  resultDiv.innerHTML = `<span style="color:#2ecc71">✅ 兑换成功！获得 ${rewardText}</span>`;
+  
+  setTimeout(() => {
+    alert(`🎉 ${reward.desc}\n\n获得：\n${rewardText}`);
+  }, 100);
+}
+
+document.getElementById('cdk-input').value = '';
+}
+
+// 筛选
+function filterQuality(q) {
+renderFighters(q);
+}
+
+// GM 工具
+function toggleGM() {
+const panel = document.getElementById('gm-panel');
+panel.classList.toggle('show');
+}
+
+
+
+// 获取满星上限
+function getMaxStars(quality) {
+if (quality === 16) return 50000; // 16 资质 - 5 万星
+if (quality === 15) return 10000; // 15 资质 - 1 万星
+if (quality <= 10) return 100;
+if (quality <= 13) return 150;
+if (quality === 14) return 200;
+return 300;
+}
+
+// 获取升星消耗
+function getStarCost(currentStars) {
+let baseCost;
+if (currentStars < 100) baseCost = 1000;
+else if (currentStars < 200) baseCost = 5000;
+else if (currentStars < 500) baseCost = 10000;
+else baseCost = 50000;
+const reduction = game.vip * 0.01;
+return Math.floor(baseCost * (1 - reduction));
+}
+
+// 获取属性成长
+function getGrowth(quality, stars) {
+const baseGrowth = {8: 5, 9: 6, 10: 7, 11: 9, 12: 11, 13: 13, 14: 16, 15: 20, 16: 30};
+let growth = baseGrowth[quality] || 5;
+
+// 基础倍率
+if (stars >= 100) growth *= 2;
+if (stars >= 500) growth *= 2;
+if (stars >= 1000) growth *= 2;
+if (stars >= 2000) growth *= 2;
+if (stars >= 3000) growth *= 2;
+if (stars >= 4000) growth *= 2;
+
+// 5000 星后每级 +10%
+if (stars >= 5000) {
+const bonusLevels = Math.floor((stars - 5000) / 100);
+growth *= (1 + bonusLevels * 0.1);
+}
+
+return growth;
+}
+
+// 检查是否解锁全体攻击
+function hasAoESkill(fighter) {
+return fighter.stars >= 10000;
+}
+
+// 计算当前属性
+function calcStats(fighter) {
+const growth = getGrowth(fighter.quality, fighter.stars);
+const atk = fighter.baseAtk + fighter.stars * growth;
+const hp = fighter.baseHp + fighter.stars * growth * 2;
+return {atk, hp};
+}
+
+// 生成唯一 ID
+function generateId() {
+return 'f_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// 检查 VIP 等级
+function checkVIP() {
+game.vip = game.vipBought;
+}
+
+// 购买 VIP
+function buyVIP(level) {
+const vip = vipConfig.find(v => v.level === level);
+if (!vip) return;
+if (game.vipBought >= level) {
+showToast('❌ 您已拥有此 VIP 等级！', 'error');
+return;
+}
+if (game.shark < vip.price) {
+showToast('🦈 鲨币不足！', 'error');
+return;
+}
+if (confirm(`确定购买 VIP${level}吗？\n\n消耗：${vip.price.toLocaleString()}🦈\n特权：升星消耗 -${vip.benefit}% (永久)`)) {
+game.shark -= vip.price;
+game.vipBought = level;
+game.vip = level;
+saveGame();
+updateUI();
+renderVIP();
+showToast(`✅ 购买成功！VIP${level} 永久生效`, 'success');
+}
+}
+
+// 检查今日魂匣格斗家
+function checkSoulFighter() {
+const today = new Date().toDateString();
+if (game.lastSoulDate !== today) {
+game.soulFighter = soul16Fighters[Math.floor(Math.random() * soul16Fighters.length)];
+game.lastSoulDate = today;
+game.soulStreak = 0;
+saveGame();
+}
+}
+
+// 存档
+function saveGame() {
+localStorage.setItem('kof-manager-save-v9', JSON.stringify(game));
+console.log('游戏已保存，金币:', game.gold, '体力:', game.energy);
+}
+
+function loadGame() {
+const save = localStorage.getItem('kof-manager-save-v9');
+console.log('读取存档:', save ? '有存档' : '无存档');
+if (save) {
+const loaded = JSON.parse(save);
+game = {...game, ...loaded};
+console.log('存档加载成功，金币:', game.gold, '体力:', game.energy);
+}
+}
+
+// 页面加载完成后初始化
+window.addEventListener('load', function() {
+console.log('页面加载完成，开始初始化...');
+init();
+initArena();
+});
+
+// ============ 竞技场系统 ============
+
+// 初始化竞技场
+function initArena() {
+// 生成 100 个虚拟玩家
+game.arena.virtualPlayers = [];
+const playerNames = [
+'独孤求败', '东方不败', '西门吹雪', '叶孤城', '令狐冲',
+'任我行', '乔峰', '段誉', '虚竹', '张无忌',
+'郭靖', '杨过', '黄药师', '欧阳锋', '洪七公',
+'周伯通', '一灯大师', '鸠摩智', '慕容复', '丁春秋',
+'游坦之', '阿紫', '阿朱', '王语嫣', '木婉清',
+'钟灵', '香香公主', '小龙女', '李莫愁', '郭芙',
+'郭襄', '灭绝师太', '殷天正', '谢逊', '韦一笑',
+'杨逍', '范遥', '殷梨亭', '宋远桥', '俞莲舟',
+'张翠山', '殷素素', '赵敏', '周芷若', '小昭',
+'蛛儿', '黄蓉', '穆念慈', '包惜弱', '李萍',
+'瑛姑', '梅超风', '陈玄风', '陆乘风', '曲灵风',
+'冯默风', '武三通', '朱子柳', '点苍渔隐', '农夫',
+'樵夫', '书生', '渔夫', '全真七子 1', '全真七子 2',
+'全真七子 3', '全真七子 4', '全真七子 5', '全真七子 6', '全真七子 7',
+'桃谷六仙 1', '桃谷六仙 2', '桃谷六仙 3', '桃谷六仙 4', '桃谷六仙 5', '桃谷六仙 6',
+'江南七怪 1', '江南七怪 2', '江南七怪 3', '江南七怪 4', '江南七怪 5', '江南七怪 6', '江南七怪 7',
+'四大恶人 1', '四大恶人 2', '四大恶人 3', '四大恶人 4',
+'逍遥二仙 1', '逍遥二仙 2',
+'明教四大法王 1', '明教四大法王 2', '明教四大法王 3', '明教四大法王 4',
+'武当七侠 1', '武当七侠 2', '武当七侠 3', '武当七侠 4', '武当七侠 5'
+];
+
+for (let i = 0; i < 100; i++) {
+const isSuper = i < 10; // 前 10 个是超级玩家
+const baseGold = isSuper ? 
+Math.floor(Math.random() * 9000000) + 1000000 : // 100 万 -1000 万
+Math.floor(Math.random() * 900000) + 100000; // 10 万 -100 万
+
+game.arena.virtualPlayers.push({
+name: playerNames[i] || `玩家${i+1}`,
+rank: i + 1,
+gold: baseGold,
+power: isSuper ? 
+Math.floor(Math.random() * 50000) + 50000 : // 5 万 -10 万战力
+Math.floor(Math.random() * 40000) + 10000 // 1 万 -5 万战力
+});
+}
+
+// 添加当前玩家
+game.arena.virtualPlayers.push({
+name: '你',
+rank: 101,
+gold: game.gold,
+power: calculatePower()
+});
+
+updateArenaDisplay();
+}
+
+// 计算玩家战力
+function calculatePower() {
+let power = 0;
+game.fighters.forEach(f => {
+const stats = calcStats(f);
+power += stats.atk + stats.hp;
+});
+return power;
+}
+
+// 更新竞技场显示
+function updateArenaDisplay() {
+// 更新当前玩家数据
+const playerIndex = game.arena.virtualPlayers.findIndex(p => p.name === '你');
+if (playerIndex >= 0) {
+game.arena.virtualPlayers[playerIndex].gold = game.gold;
+game.arena.virtualPlayers[playerIndex].power = calculatePower();
+}
+
+// 按战力排序
+game.arena.virtualPlayers.sort((a, b) => b.power - a.power);
+
+// 更新排名
+game.arena.virtualPlayers.forEach((p, i) => {
+p.rank = i + 1;
+});
+
+// 找到玩家排名
+const playerRank = game.arena.virtualPlayers.findIndex(p => p.name === '你') + 1;
+game.arena.rank = playerRank;
+
+// 更新显示
+const rankEl = document.getElementById('arena-rank');
+if (rankEl) {
+rankEl.textContent = playerRank;
+rankEl.style.color = playerRank === 1 ? '#ffd700' : playerRank <= 10 ? '#ff6b6b' : '#888';
+}
+
+const lastClaimEl = document.getElementById('arena-last-claim');
+if (lastClaimEl) {
+if (game.arena.lastClaim) {
+const lastClaimDate = new Date(game.arena.lastClaim);
+const today = new Date();
+if (lastClaimDate.toDateString() === today.toDateString()) {
+lastClaimEl.textContent = '已领取';
+lastClaimEl.style.color = '#2ecc71';
+} else {
+lastClaimEl.textContent = '可领取';
+lastClaimEl.style.color = '#ffd700';
+}
+} else {
+lastClaimEl.textContent = '可领取';
+lastClaimEl.style.color = '#ffd700';
+}
+}
+}
+
+// 领取竞技场奖励
+function claimArenaReward() {
+// 检查是否已领取
+if (game.arena.lastClaim) {
+const lastClaimDate = new Date(game.arena.lastClaim);
+const today = new Date();
+if (lastClaimDate.toDateString() === today.toDateString()) {
+alert('今日奖励已领取！');
+return;
+}
+}
+
+// 更新排名
+updateArenaDisplay();
+
+// 根据排名发放奖励
+let reward = {shark: 0, shard: 0, gold: 0};
+if (game.arena.rank === 1) {
+reward = {shark: 1000, shard: 100000, gold: 1000000};
+} else if (game.arena.rank === 2) {
+reward = {shark: 500, shard: 50000, gold: 500000};
+} else if (game.arena.rank <= 10) {
+reward = {shark: 100, shard: 10000, gold: 100000};
+} else {
+reward = {shark: 50, shard: 5000, gold: 50000};
+}
+
+game.shark += reward.shark;
+game.shard += reward.shard;
+game.gold += reward.gold;
+game.arena.lastClaim = new Date().toISOString();
+
+saveGame();
+updateUI();
+updateArenaDisplay();
+
+alert(`🏆 竞技场奖励领取成功！\n\n🦈 鲨币：+${reward.shark}\n💎 碎片：+${reward.shard.toLocaleString()}\n💰 金币：+${reward.gold.toLocaleString()}`);
+}
+
+// 刷新排名
+function updateArenaRank() {
+updateArenaDisplay();
+alert('排名已刷新！');
+}
+
+
+
+</script>
+</body>
+</html>
